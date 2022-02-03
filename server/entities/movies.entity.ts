@@ -23,7 +23,7 @@ export class Movie extends BaseEntity {
   @Column({ nullable: false, type: "text" })
   movieContent: string;
 
-  @Column({ nullable: false, unique: true, type: 'year' })
+  @Column({ nullable: false, type: 'year' })
   releasedYear: number;
 
   @Column({ nullable: false })

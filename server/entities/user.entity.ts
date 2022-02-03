@@ -29,6 +29,6 @@ export class User extends BaseEntity {
   @OneToMany(() => Movie, movie => movie.user, {onDelete: 'CASCADE'})
   movies: Array<Movie>;
 
-  @OneToMany(() => Actor, actor => actor.id, {onDelete: 'CASCADE'})
+  @OneToMany(() => Actor, actor => actor.user, {onDelete: 'CASCADE'})
   actors: Array<Actor>;
 }

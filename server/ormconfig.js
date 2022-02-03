@@ -5,7 +5,7 @@ module.exports = {
     username: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    entities: ["entity/*.ts"],
+    entities: ["entities/*.ts"],
     logging: false,
     synchronize: true,
   };
