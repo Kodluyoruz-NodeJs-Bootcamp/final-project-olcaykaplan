@@ -1,21 +1,37 @@
-import express from "express"
-import { AddMovie, GetAllMovies, DeleteMovie } from "../controllers/movie.controller";
-import { AddMovieComment ,GetAllCommentsOfMovie } from "../controllers/comments.controller";
+import express from "express";
+import {
+  AddMovie,
+  UpdateMovie,
+  DeleteMovie,
+  GetAllMovies,
+
+  AddCommentForMovie,
+  UpdateComment,
+  DeleteComment,
+  GetAllCommentsOfMovie,
+  
+  AddLikeForMovie,
+  GetAllLikesOfMovie,
+  DeleteLike
+} from "../controllers/movie.controller";
 
 const router = express.Router();
 
-router.post('/movie', AddMovie)
-router.delete('/movie/:id', DeleteMovie)
-router.put('/movie/:id')
+// CONMMENT
+router.post("/movie/comment", AddCommentForMovie);
+router.put("/movie/comment/:id", UpdateComment);
+router.delete("/movie/comment", DeleteComment)
+router.get("/movie/comments", GetAllCommentsOfMovie);
 
-router.get('/movies', GetAllMovies)
+//LIKE
+router.post("/movie/like", AddLikeForMovie);
+router.delete("/movie/like", DeleteLike)
+router.get("/movie/likes", GetAllLikesOfMovie);
 
-
-
-
-// movie comment
-router.post('/movie/comment', AddMovieComment)
-router.get('/movie/comments', GetAllCommentsOfMovie);
-
+//Movie
+router.post("/movie", AddMovie);
+router.delete("/movie/:id", DeleteMovie);
+router.put("/movie/:id", UpdateMovie);
+router.get("/movies", GetAllMovies);
 
 export = router;
