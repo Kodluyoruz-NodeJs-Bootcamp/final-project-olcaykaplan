@@ -7,7 +7,7 @@ export class ActorLikes extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => Actor)
+    @ManyToOne(() => Actor,  { onDelete: "CASCADE" })
     actor: Actor;
 
     @ManyToOne(() => User)

@@ -10,7 +10,7 @@ export class ActorComment extends BaseEntity {
     @Column({nullable: false})
     comment: string;
 
-    @ManyToOne(() => Actor)
+    @ManyToOne(() => Actor, { onDelete: "CASCADE" })
     actor: Actor;
 
     @ManyToOne(() => User)

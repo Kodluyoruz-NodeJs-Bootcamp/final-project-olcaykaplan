@@ -49,6 +49,27 @@ export const GetAllMovies = async (req: Request, res: Response) => {
   }
 };
 
+export const GetAllMoviesByFilter = async (req: Request, res: Response) => {
+  try {
+    const filter = req.body.filter;
+    let isPublished = filter === "published"; // true or false
+    const actors = await Movie.find({ where: { isPublished } });
+    res.status(200).send(actors);
+  } catch (error) {
+    console.log("GetAllMoviesByFilter | error", error);
+  }
+};
+
+// publish movie or hide according to body information 
+export const ChangePublishValueForMovie = async (req: Request, res: Response) => {
+  try {
+    const {movieId, isPublished} = req.body;
+    await Movie.update(Number(movieId), { isPublished });
+    res.status(202).send("success");
+  } catch (error) {}
+};
+
+
 // COMMENT START
 
 // Add new Comment for Movie

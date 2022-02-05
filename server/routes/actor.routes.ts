@@ -4,6 +4,7 @@ import {
   UpdateActor,
   DeleteActor,
   GetAllActors,
+  ChangePublishValueForActor,
   
   AddCommentForActor,
   UpdateComment,
@@ -30,6 +31,8 @@ router.delete("/actor/like", DeleteLike);
 router.get("/actor/likes", GetAllLikesOfActor);
 
 //Actor
+router.post("/actor/publish", ChangePublishValueForActor)
+
 router.post("/actor", AddActor);
 router.delete("/actor/:id", DeleteActor);
 router.put("/actor/:id", UpdateActor);

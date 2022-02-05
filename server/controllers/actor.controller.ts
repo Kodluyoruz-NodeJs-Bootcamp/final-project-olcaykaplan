@@ -47,6 +47,27 @@ export const GetAllActors = async (req: Request, res: Response) => {
   }
 };
 
+export const GetAllActorsByFilter = async (req: Request, res: Response) => {
+  try {
+    const filter = req.body.filter;
+    let isPublished = filter === "published"; // true or false
+    const actors = await Actor.find({ where: { isPublished } });
+    res.status(200).send(actors);
+  } catch (error) {
+    console.log("GetAllActorsByFilter | error", error);
+  }
+};
+
+// publish actor or hide according to body information 
+export const ChangePublishValueForActor = async (req: Request, res: Response) => {
+  try {
+    const {actorId, isPublished} = req.body;
+    await Actor.update(Number(actorId), { isPublished });
+    res.status(202).send("success");
+  } catch (error) {}
+};
+
+
 // COMMENT START
 
 // Add new Comment for Actor
@@ -70,7 +91,7 @@ export const UpdateComment = async (req: Request, res: Response) => {
     const comment = req.body.comment;
     const update = await ActorComment.update(commentId, { comment });
 
-    res.status(202).send(update)
+    res.status(202).send(update);
   } catch (error) {}
 };
 

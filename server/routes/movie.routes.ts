@@ -4,6 +4,7 @@ import {
   UpdateMovie,
   DeleteMovie,
   GetAllMovies,
+  ChangePublishValueForMovie,
 
   AddCommentForMovie,
   UpdateComment,
@@ -28,10 +29,15 @@ router.post("/movie/like", AddLikeForMovie);
 router.delete("/movie/like", DeleteLike)
 router.get("/movie/likes", GetAllLikesOfMovie);
 
+
+
 //Movie
+router.post("/movie/publish", ChangePublishValueForMovie)
+
 router.post("/movie", AddMovie);
 router.delete("/movie/:id", DeleteMovie);
 router.put("/movie/:id", UpdateMovie);
 router.get("/movies", GetAllMovies);
+
 
 export = router;

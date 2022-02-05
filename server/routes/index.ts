@@ -5,7 +5,7 @@ import authApi from "./auth.routes";
 const router = express.Router();
 
 router.use(movieApi)
-router.use(authApi)
+router.use("/auth",authApi)
 
 
 export = router;
