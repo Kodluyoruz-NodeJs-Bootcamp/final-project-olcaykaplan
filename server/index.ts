@@ -4,6 +4,8 @@ import cookieParser from "cookie-parser";
 import {createConnection} from "typeorm";
 import api from "./routes"
 import "dotenv/config";
+import "./controllers/auth/passportGoogle.auth"
+import "./controllers/auth/passportFacebook.auth"
 
 createConnection().then(connection => {
     const app = express();
