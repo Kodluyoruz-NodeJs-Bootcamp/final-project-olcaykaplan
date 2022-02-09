@@ -3,12 +3,14 @@ import { MovieComment } from "../entities/movieComments.entity";
 import { MovieLikes } from "../entities/movieLikes.entity";
 import { Movie } from "../entities/movies.entity";
 import { User } from "../entities/user.entity";
+import { IUser } from "./auth/passportGoogle.auth";
 
 export const AddMovie = async (req: Request, res: Response) => {
   try {
-    console.log("AddMovie req.body", req.body);
-    const { userId, ...body } = req.body;
-    const user = await User.findOne(userId);
+    const {id} = req["user"] as IUser
+    const body = req.body;
+    const user = await User.findOne(id);
+    console.log("user",user)
     const movie = await Movie.save({
       ...body,
       user,
@@ -48,6 +50,24 @@ export const GetAllMovies = async (req: Request, res: Response) => {
     console.log("GetAllMovies | error", error);
   }
 };
+export const GetOwnMovieList = async (req: Request, res: Response) => {
+  try {
+    console.log("GetOwnMovieList")
+    const {id} = req["user"] as IUser
+    console.log("id",id)
+    const movieList = await Movie.find({relations:["user"], where:{user :{id:id}}});
+ 
+    let ownMovieList = await Promise.all(movieList.map(async(movie) => {
+      const comments = await GetAllCommentsOfMovie(movie.id)
+      const likes = await GetAllLikesOfMovie(movie.id)
+      return {...movie, comments, likes}
+    }));
+   
+    res.status(200).send(ownMovieList);
+  } catch (error) {
+    console.log("GetAllMovies | error", error);
+  }
+};
 
 export const GetAllMoviesByFilter = async (req: Request, res: Response) => {
   try {
@@ -64,6 +84,7 @@ export const GetAllMoviesByFilter = async (req: Request, res: Response) => {
 export const ChangePublishValueForMovie = async (req: Request, res: Response) => {
   try {
     const {movieId, isPublished} = req.body;
+    console.log("movieId | isPublished", movieId, " | ",isPublished)
     await Movie.update(Number(movieId), { isPublished });
     res.status(202).send("success");
   } catch (error) {}
@@ -75,7 +96,6 @@ export const ChangePublishValueForMovie = async (req: Request, res: Response) =>
 // Add new Comment for Movie
 export const AddCommentForMovie = async (req: Request, res: Response) => {
   try {
-    console.log("AddMovie: ", req.body);
     const { userId, movieId, ...body } = req.body;
     const user = await User.findOne(userId);
     const movie = await Movie.findOne(movieId);
@@ -110,14 +130,30 @@ export const DeleteComment = async (req: Request, res: Response) => {
   }
 };
 
-export const GetAllCommentsOfMovie = async (req: Request, res: Response) => {
+export const GetAllCommentsOfMovie = async (movieId:number) => {
   try {
-    const movieId = req.body.movieId;
     const comments = await MovieComment.find({
-      relations: ["movie", "user"],
+      relations: ["user"],
       where: { movie: { id: movieId } },
     });
-    res.status(200).send(comments);
+    const resComments = comments.map(comment => {
+      const {password, googleId, facebookId, source, ...user} = comment.user
+      return {id: comment.id, comment: comment.comment, user}
+    })
+    return resComments;
+  } catch (error) {}
+};
+export const GetAllCommentsOfMovieRQ = async (req: Request, res: Response) => {
+  try {
+    const comments = await MovieComment.find({
+      relations: ["user"],
+      where: { movie: { id: req.body.movieId } },
+    });
+    const resComments = comments.map(comment => {
+      const {password, googleId, facebookId, source, ...user} = comment.user
+      return {id: comment.id, comment: comment.comment, user}
+    })
+    res.send(resComments);
   } catch (error) {}
 };
 
@@ -151,14 +187,31 @@ export const DeleteLike = async (req: Request, res: Response) => {
   }
 };
 
-export const GetAllLikesOfMovie = async (req: Request, res: Response) => {
+export const GetAllLikesOfMovie = async (movieId:number) => {
   try {
-    const movieId = req.body.movieId;
-    const comments = await MovieComment.find({
+    const likes = await MovieLikes.find({
       relations: ["movie", "user"],
       where: { movie: { id: movieId } },
     });
-    res.status(200).send(comments);
+    const resLikes = likes.map(like => {
+      const {password, googleId, facebookId, source, ...user} = like.user
+      return user
+    })
+    return resLikes
+  } catch (error) {}
+};
+export const GetAllLikesOfMovieRQ = async (req: Request, res: Response) => {
+  try {
+    console.log("hello ")
+    const likes = await MovieLikes.find({
+      relations: [ "user"],
+      where: { movie: { id: req.body.movieId } },
+    });
+    const resLikes = likes.map(like => {
+      const {password, googleId, facebookId, source, ...user} = like.user
+      return user
+    })
+    res.send(resLikes)
   } catch (error) {}
 };
 

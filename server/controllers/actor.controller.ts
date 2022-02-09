@@ -3,17 +3,26 @@ import { ActorComment } from "../entities/actorComments.entity";
 import { ActorLikes } from "../entities/actorLikes.entity";
 import { Actor } from "../entities/actors.entity";
 import { User } from "../entities/user.entity";
+import { IUser } from "./auth/passportGoogle.auth";
 
 export const AddActor = async (req: Request, res: Response) => {
   try {
-    const { userId, ...body } = req.body;
-    const user = await User.findOne(userId);
+    console.log("add Actor")
+    const {id} = req["user"] as IUser
+    const body = req.body;
+    console.log("userId",id)
+    console.log("body",body)
+    const user = await User.findOne(id);
+    console.log("user")
     const actor = await Actor.save({
       ...body,
       user,
     });
-    res.status(201).send(actor);
-  } catch (error) {}
+    res.send(actor);
+    console.log("actor",actor)
+  } catch (error) {
+    console.log("AddActor | error",error)
+  }
 };
 
 export const UpdateActor = async (req: Request, res: Response) => {
@@ -42,6 +51,15 @@ export const GetAllActors = async (req: Request, res: Response) => {
   try {
     const actors = await Actor.find();
     res.status(200).send(actors);
+  } catch (error) {
+    console.log("GetAllActors | error", error);
+  }
+};
+export const GetOwnActorList = async (req: Request, res: Response) => {
+  try {
+    const {id} = req["user"] as IUser
+    const ownActorList = await Actor.find({relations:["comments","likes"], where:{user :{id}}});
+    res.status(200).send(ownActorList);
   } catch (error) {
     console.log("GetAllActors | error", error);
   }

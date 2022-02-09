@@ -22,8 +22,20 @@ export class User extends BaseEntity {
   @Column({ nullable: false, unique: true })
   email: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   password: string;
+
+  @Column({nullable: true})
+  googleId: string
+
+  @Column({nullable: true})
+  facebookId: string
+
+  @Column({ nullable: false })
+  source: string;
+
+  @Column({ nullable: true })
+  picture: string;
 
   //One To Manies here (Movie, MovieStars)
   @OneToMany(() => Movie, movie => movie.user, {onDelete: 'CASCADE'})
