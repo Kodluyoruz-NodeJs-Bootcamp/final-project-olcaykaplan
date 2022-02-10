@@ -16,7 +16,7 @@ import {
   GetAllLikesOfActor,
   DeleteLike,
 } from "../controllers/actor.controller";
-import checkAuth from '../middleware/checkAuth'; 
+import {isUserAuthenticated} from '../middleware/checkAuth'; 
 const router = express.Router();
 
 
@@ -34,9 +34,9 @@ router.get("/actor/likes", GetAllLikesOfActor);
 //Actor
 router.post("/actor/publish", ChangePublishValueForActor)
 router.get("/actor/discover", GetAllActors);
-router.get("/own-actor-list",checkAuth, GetOwnActorList);
+router.get("/own-actor-list",isUserAuthenticated, GetOwnActorList);
 
-router.post("/actor", checkAuth, AddActor);
+router.post("/actor", isUserAuthenticated, AddActor);
 router.delete("/actor/:id", DeleteActor);
 router.put("/actor/:id", UpdateActor);
 

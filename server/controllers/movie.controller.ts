@@ -60,7 +60,8 @@ export const GetOwnMovieList = async (req: Request, res: Response) => {
     let ownMovieList = await Promise.all(movieList.map(async(movie) => {
       const comments = await GetAllCommentsOfMovie(movie.id)
       const likes = await GetAllLikesOfMovie(movie.id)
-      return {...movie, comments, likes}
+      const {password, facebookId, googleId, source, ...user} = movie.user
+      return {...movie, comments, likes, user}
     }));
    
     res.status(200).send(ownMovieList);
@@ -96,32 +97,26 @@ export const ChangePublishValueForMovie = async (req: Request, res: Response) =>
 // Add new Comment for Movie
 export const AddCommentForMovie = async (req: Request, res: Response) => {
   try {
-    const { userId, movieId, ...body } = req.body;
-    const user = await User.findOne(userId);
+    const {id} = req["user"] as IUser
+    console.log("req.body",req.body)
+    const { movieId, ...body } = req.body;
+    const user = await User.findOne(id);
     const movie = await Movie.findOne(movieId);
-    const comment = await MovieComment.save({
+    const addedComment = await MovieComment.save({
       ...body,
       user,
       movie,
     });
-    res.status(201).send(comment);
+    console.log(addedComment)
+    res.status(201).send(addedComment);
   } catch (error) {}
 };
 
-export const UpdateComment = async (req: Request, res: Response) => {
-  try {
-    const commentId = req.params.id;
-    const comment = req.body.comment;
-    const update = await MovieComment.update(commentId, { comment });
-
-    res.status(202).send(update)
-  } catch (error) {}
-};
 
 // Delete Comment by Comment ID
 export const DeleteComment = async (req: Request, res: Response) => {
   try {
-    const commentId = req.body.commentId;
+    const commentId = req.params.commentId;
     console.log("commentId", commentId);
     await MovieComment.delete(commentId);
     res.status(204).send(true);
@@ -162,25 +157,27 @@ export const GetAllCommentsOfMovieRQ = async (req: Request, res: Response) => {
 // LIKE START
 export const AddLikeForMovie = async (req: Request, res: Response) => {
   try {
-    console.log("AddMovie: ", req.body);
-    const { userId, movieId, ...body } = req.body;
-    const user = await User.findOne(userId);
-    const movie = await Movie.findOne(movieId);
-    const likes = await MovieLikes.save({
-      ...body,
-      user,
-      movie,
-    });
-    res.status(201).send(likes);
+    console.log("AddLikeForMovie: ", req.body);
+    const {id} = req["user"] as IUser
+    const movieId = req.params.movieId
+    const user = await User.findOne(id);
+    const movie = await Movie.findOne(Number(movieId));
+    const body:any = {user, movie}
+    const savedLike = await MovieLikes.save({
+     ...body
+    })
+    const {password, googleId, facebookId, source, ...userData} = savedLike.user
+    const like = {id:savedLike.id, movieId:savedLike.movie.id, user:userData}
+    res.status(201).send(like);
   } catch (error) {}
 };
 
 // Delete Like by Like ID
 export const DeleteLike = async (req: Request, res: Response) => {
   try {
-    const likeId = req.body.likeId;
-    console.log("commentId", likeId);
-    await MovieComment.delete(likeId);
+    const likeId = req.params.likeId;
+    console.log("likeId",likeId)
+    await MovieLikes.delete(likeId);
     res.status(204).send(true);
   } catch (error) {
     console.log("DeleteComment | error: ", error);
@@ -193,9 +190,10 @@ export const GetAllLikesOfMovie = async (movieId:number) => {
       relations: ["movie", "user"],
       where: { movie: { id: movieId } },
     });
+    console.log("likes",likes)
     const resLikes = likes.map(like => {
       const {password, googleId, facebookId, source, ...user} = like.user
-      return user
+      return {id:like.id, movieId:like.movie.id, user}
     })
     return resLikes
   } catch (error) {}

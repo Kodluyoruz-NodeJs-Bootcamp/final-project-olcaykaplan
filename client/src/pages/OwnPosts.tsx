@@ -23,13 +23,15 @@ import MovieItem from "../Components/Posts/MovieItem";
 const OwnPosts = () => {
   const dispatch = useDispatch();
   // const {myList} = useSelector((state:RootState) => state.actor)
+  const { ownList } = useSelector((state: RootState) => state.movie);
+
   // console.log("myList",myList)
   useEffect(() => {
     dispatch(fetchOwnMovieList());
   }, []);
   return (
-    <Grid container justifyContent="center">
-      <Grid item md={12}>
+    <Grid container justifyContent="center" sx={{backgroundColor:"#F0A500"}}>
+      <Grid item md={12} sx={{height:"200px" }}>
         user information will be here
       </Grid>
       <Grid item md={12}>
@@ -39,16 +41,15 @@ const OwnPosts = () => {
         item
         md={8}
         xs={12}
-        textAlign="center"
-        style={{ backgroundColor: "red" }}
+        textAlign="center"        
       >
         <h1>Movies Here</h1>
         <Grid
           container
           justifyContent="center"
-          sx={{ backgroundColor: "orange", padding: { xs: "20px 0px", md:"60px" } }}
+          sx={{ padding: { xs: "20px 0px", md:"60px" } }}
         >
-          <MovieItem/>
+          <MovieItem movieList={ownList}/>
        </Grid>
       </Grid>
     </Grid>

@@ -8,7 +8,6 @@ import {
   ChangePublishValueForMovie,
 
   AddCommentForMovie,
-  UpdateComment,
   DeleteComment,
   GetAllCommentsOfMovieRQ,
   
@@ -16,19 +15,18 @@ import {
   GetAllLikesOfMovieRQ,
   DeleteLike
 } from "../controllers/movie.controller";
-import checkAuth from '../middleware/checkAuth'; 
+import {isUserAuthenticated, doesUserHasAuthorityForRemoveComment,} from '../middleware/checkAuth'; 
 
 const router = express.Router();
 
 // CONMMENT
-router.post("/movie/comment",checkAuth, AddCommentForMovie);
-router.put("/movie/comment/:id", UpdateComment);
-router.delete("/movie/comment", DeleteComment)
+router.post("/movie/comment",isUserAuthenticated, AddCommentForMovie);
+router.delete("/movie/comment/:commentId", isUserAuthenticated, doesUserHasAuthorityForRemoveComment, DeleteComment)
 router.get("/movie/comments", GetAllCommentsOfMovieRQ);
 
 //LIKE
-router.post("/movie/like", AddLikeForMovie);
-router.delete("/movie/like", DeleteLike)
+router.post("/movie/like/:movieId",isUserAuthenticated, AddLikeForMovie);
+router.delete("/movie/like/:likeId",isUserAuthenticated,  DeleteLike)
 router.get("/movie/likes", GetAllLikesOfMovieRQ);
 
 
@@ -36,9 +34,9 @@ router.get("/movie/likes", GetAllLikesOfMovieRQ);
 //Movie
 router.post("/movie/publish", ChangePublishValueForMovie)
 router.get("/movie/discover", GetAllMovies);
-router.get("/own-movie-list",checkAuth, GetOwnMovieList )
+router.get("/own-movie-list",isUserAuthenticated, GetOwnMovieList )
 
-router.post("/movie",checkAuth, AddMovie);
+router.post("/movie",isUserAuthenticated, AddMovie);
 router.delete("/movie/:id", DeleteMovie);
 router.put("/movie/:id", UpdateMovie);
 

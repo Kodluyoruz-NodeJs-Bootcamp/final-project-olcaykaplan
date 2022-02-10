@@ -1,6 +1,6 @@
 import express from "express"
 import {Logout, CreateUser, AuthenticatedUser} from "../controllers/auth.controller"
-import checkAuth from "../middleware/checkAuth"
+import {isUserAuthenticated} from "../middleware/checkAuth"
 import passport from "passport";
 import {sign} from "jsonwebtoken";
 import {IUser} from '../controllers/auth/passportGoogle.auth';
@@ -11,7 +11,7 @@ const TWO_HOURS = 1000 * 60 * 60 * 2;
 router.post('/logout', Logout)
 //router.post('/signin', Login)
 router.post('/signup', CreateUser)
-router.get('/user-auth', checkAuth, AuthenticatedUser)
+router.get('/user-auth', isUserAuthenticated, AuthenticatedUser)
 router.get("/google", passport.authenticate("google", {session:false, scope: ["profile", "email"] }));
 
 router.get(

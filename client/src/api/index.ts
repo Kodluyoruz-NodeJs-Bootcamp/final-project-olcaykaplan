@@ -1,6 +1,6 @@
 import axios from "axios";
 import { actor } from "../reducers/actor.reducer";
-import { movieRegister } from "../reducers/movie.reducer";
+import { movieRegister } from "../utils/types";
 
 const url = "http://localhost:5000/api";
 
@@ -20,3 +20,9 @@ export const addNewMovie = (movieData:movieRegister) => API.post("/movie", movie
 export const publishMovie = (data:object) => API.post("/movie/publish", data)
 export const fetchOwnMovieList = () => API.get("/own-movie-list")
 export const fetchDiscoverMovieList = () => API.get("/movie/discover")
+//Movie Comment
+export const addNewCommentForMovie = (movieId:number, comment:string) => API.post("/movie/comment", {movieId,comment})
+export const removeComment = (commentId:number) => API.delete(`/movie/comment/${commentId}` )
+//Movie Like
+export const likeMovie = (movieId:number) => API.post(`/movie/like/${movieId}`)
+export const removeLikeMovie = (likeId:number) => API.delete(`/movie/like/${likeId}`)

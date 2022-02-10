@@ -1,7 +1,7 @@
 import { ActionType } from "../utils/constant";
 
 type IUser = {
-  id: string,
+  id: number,
   name: string,
   surname: string,
   email: string
@@ -17,7 +17,7 @@ type IDEFAULT_STATE = {isAuthenticated: boolean, user: IUser, errorMessage: stri
 let DEFAULT_STATE: IDEFAULT_STATE= {
   isAuthenticated: false,
   user: {
-    id: "",
+    id: 0,
     name: "",
     surname: "",
     email: "",

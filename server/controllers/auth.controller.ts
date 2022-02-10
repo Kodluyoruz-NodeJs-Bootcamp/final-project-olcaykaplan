@@ -16,8 +16,8 @@ export const CreateUser = async (req: Request, res: Response) => {
 }
 
 export const AuthenticatedUser = async (req: Request, res: Response) => {
-    const {name, surname, email, picture} = req["user"] as IUser    
-    res.send({user: {name, surname, email, picture }});
+    const {id, name, surname, email, picture} = req["user"] as IUser    
+    res.send({user: {id, name, surname, email, picture }});
 }
 
 export const Logout = async () => {

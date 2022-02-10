@@ -13,18 +13,36 @@ import imaged from "../../../assets/img/images.png";
 import Comments from "../Comments";
 import LeaveComment from "../LeaveComment";
 import { useDispatch, useSelector } from "react-redux";
+import {
+  publishMovie,
+  likeMovie,
+  removeLikeMovie,
+} from "../../../actions/movie.action";
+import { like, movie } from "../../../utils/types";
 import { RootState } from "../../../reducers";
-import {publishMovie} from "../../../actions/movie.action"
 
-const MovieItem = () => {
-  const { ownList } = useSelector((state: RootState) => state.movie);
-  const dispatch = useDispatch()
-  const changePublishMovieHandler = (movieId:number, publishValue:boolean) => {
-    dispatch(publishMovie(movieId, publishValue))
-  }
+interface Props {
+  movieList: Array<movie>;
+}
+const MovieItem = ({ movieList }: Props) => {
+  const dispatch = useDispatch();
+  const { id } = useSelector((state: RootState) => state.auth).user;
+  const changePublishMovieHandler = (
+    movieId: number,
+    publishValue: boolean
+  ) => {
+    dispatch(publishMovie(movieId, publishValue));
+  };
+  const likeMovieHandler = (movieId: number) => {
+    dispatch(likeMovie(movieId));
+  };
+  const removeLikeMovieHandler = (movieId: number, likes:Array<like>) => {
+    const likeId:number = likes?.find(like => like.user.id === id)?.id || 0
+    dispatch(removeLikeMovie(movieId, likeId));
+  };
   return (
     <>
-      {ownList.map((movie) => (
+      {movieList.map((movie) => (
         <Card
           key={movie.id}
           sx={{ width: "85%", padding: "10px 20px", marginBottom: "50px" }}
@@ -52,18 +70,36 @@ const MovieItem = () => {
             </Box>
           </CardContent>
           <CardActions style={{ float: "right" }}>
-            {movie.isPublished  ? (
+            {movie.isPublished ? (
               <>
-                <Button size="small" onClick={() => changePublishMovieHandler(movie.id, false)}>
+                <Button
+                  size="small"
+                  onClick={() => changePublishMovieHandler(movie.id, false)}
+                >
                   <strong>Hide This Post</strong>
                 </Button>
-                <IconButton aria-label="add to favorites">
-                  <FavoriteIcon />
-                </IconButton>
-                {movie.likes.length > 0 ? `(${movie.likes.length})`: null}
+                {movie?.likes?.filter((m) => m.user.id === id).length > 0 ? (
+                  <IconButton
+                    aria-label="add to favorites"
+                    onClick={() => removeLikeMovieHandler(movie.id, movie.likes)}
+                  >
+                    <FavoriteIcon sx={{ color: "red" }} />
+                  </IconButton>
+                ) : (
+                  <IconButton
+                    aria-label="add to favorites"
+                    onClick={() => likeMovieHandler(movie.id)}
+                  >
+                    <FavoriteIcon />
+                  </IconButton>
+                )}
+                {movie.likes.length > 0 ? `(${movie.likes.length})` : null}
               </>
             ) : (
-              <Button size="small" onClick={() => changePublishMovieHandler(movie.id, true)}>
+              <Button
+                size="small"
+                onClick={() => changePublishMovieHandler(movie.id, true)}
+              >
                 <strong>Share</strong>
               </Button>
             )}
@@ -71,10 +107,10 @@ const MovieItem = () => {
           {movie.isPublished ? (
             <>
               <Box>
-                <Comments commentList={movie.comments} />
+                <Comments movieId={movie.id} commentList={movie.comments} />
               </Box>
               <Box>
-                <LeaveComment />
+                <LeaveComment movieId={movie.id} user={movie.user} />
               </Box>
             </>
           ) : null}

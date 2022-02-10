@@ -1,23 +1,65 @@
 import * as api from "../api";
 import { ActionType } from "../utils/constant";
 import { Dispatch } from "redux"
-import { Action, movieRegister } from "../reducers/movie.reducer";
-
+import { Action } from "../reducers/movie.reducer";
+import { movieRegister, user } from "../utils/types";
 
 export const addNewMovie = (movieData:movieRegister) => async (dispatch: Dispatch<Action>) => {
     try {
         const {data} = await api.addNewMovie(movieData)
-        console.log("addNewMovie || data",data)
     } catch (error) {
         console.log("error",error)
     }
 }
+export const addNewCommentForMovie = (movieId:number,movieComment:string, user:user, isOwnMovie:boolean) => async (dispatch: Dispatch<Action>) => {
+    try {
+        let {data} = await api.addNewCommentForMovie(movieId,movieComment)
+        dispatch({type:ActionType.ADD_COMMENT_FOR_MOVIE, data:{...data, movieId}})
+    } catch (error) {
+        console.log("error",error)
+    }
+}
+
+export const removeComment = (commentId:number, movieId:number ) => async (dispatch: Dispatch<Action>) => {
+
+       const data =  await api.removeComment(commentId)
+       .then((response) => {
+           dispatch({type:ActionType.REMOVE_MOVIE_COMMENT, data:{movieId, commentId}})
+       })
+       .catch((error)=> {
+            if (error.response){
+                console.log(error.response.data)
+                // console.log(error.response.status)
+                // console.log(error.response.headers)
+            }
+        })
+}
+
 
 export const publishMovie = (movieId:number, isPublished:boolean) => async (dispatch: Dispatch<Action>) => {
     try {
         const data = { movieId, isPublished}
         const update = await api.publishMovie(data)
         window.location.reload()
+    } catch (error) {
+        
+    }
+}
+export const likeMovie = (movieId:number) => async (dispatch: Dispatch<Action>) => {
+    try {
+        const {data} = await api.likeMovie(movieId)
+       console.log("data",data)
+        dispatch({type:ActionType.LIKE_MOVIE ,data})
+    } catch (error) {
+        
+    }
+}
+export const removeLikeMovie = (movieId:number, likeId:number) => async (dispatch: Dispatch<Action>) => {
+    try {
+        const {data} = await api.removeLikeMovie(likeId)
+        console.log("update",data)
+        dispatch({type:ActionType.REMOVE_LIKE_MOVIE , data:{movieId, likeId}})
+
     } catch (error) {
         
     }
