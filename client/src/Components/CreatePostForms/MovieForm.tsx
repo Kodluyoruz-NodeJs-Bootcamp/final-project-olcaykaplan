@@ -13,8 +13,10 @@ import {
 } from "@mui/material";
 import moment from "moment";
 import {addNewMovie} from "../../actions/movie.action";
+import { useHistory } from "react-router";
 const MovieForm = () => {
   const dispatch = useDispatch();
+  const history = useHistory()
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -25,6 +27,9 @@ const MovieForm = () => {
       originalLanguage: data.get("originalLanguage"),
     };
     dispatch((addNewMovie(movieData)))
+    history.push({
+      pathname:"/user/own-posts"
+    })
   };
   return (
     <Grid item>

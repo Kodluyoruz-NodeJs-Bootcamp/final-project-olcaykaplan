@@ -12,8 +12,10 @@ import {
 } from "@mui/material";
 import moment from "moment";
 import {addNewActor} from "../../actions/actor.action";
+import { useHistory } from "react-router";
 const ActorForm = () => {
   const dispatch = useDispatch();
+  const history = useHistory()
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -24,6 +26,9 @@ const ActorForm = () => {
       gender: data.get("gender"),
     };
     dispatch((addNewActor(actorData)))
+    history.push({
+      pathname:"/user/own-posts"
+    })
   };
   return (
     <Grid item>
