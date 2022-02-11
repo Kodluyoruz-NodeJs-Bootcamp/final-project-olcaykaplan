@@ -55,7 +55,7 @@ export const GetOwnMovieList = async (req: Request, res: Response) => {
     console.log("GetOwnMovieList")
     const {id} = req["user"] as IUser
     console.log("id",id)
-    const movieList = await Movie.find({relations:["user"], where:{user :{id:id}}});
+    const movieList = await Movie.find({relations:["user"], where:{user :{id:id}}, order:{createDate:"DESC"}});
  
     let ownMovieList = await Promise.all(movieList.map(async(movie) => {
       const comments = await GetAllCommentsOfMovie(movie.id)
