@@ -8,6 +8,7 @@ const API = axios.create({ baseURL: url, withCredentials: true });
 
 //Fetch User
 export const fetchUser = () => API.get("/auth/user-auth");
+export const logout = () => API.get("/auth/logout");
 
 
 // Actor

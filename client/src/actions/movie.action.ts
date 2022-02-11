@@ -88,13 +88,13 @@ export const removeLikeMovie = (movieId:number, likeId:number) => async (dispatc
 
 export const fetchOwnMovieList = () => async (dispatch: Dispatch<Action>) => {
     try {
-        const data = await api.fetchOwnMovieList()
+        const {data} = await api.fetchOwnMovieList()
         console.log("fetchOwnMovieList DDDDD || data",data)
-       // dispatch({type:ActionType.MY_MOVIE_LIST, data:{data}})
+        dispatch({type:ActionType.MY_MOVIE_LIST, data})
     } catch (error) {
         console.log("error",error)
     }
-}
+  }
 
 export const fetchDiscoverMovieList = () => async (dispatch: Dispatch<Action>) => {
     try {

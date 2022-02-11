@@ -17,15 +17,15 @@ import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import logo from "../../assets/img/logo.png"
 import { RootState } from '../../reducers';
-
+import { logout } from "../../actions/user.action"
 const Header = () => {
   const dispatch = useDispatch();
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const {isAuthenticated, user} = useSelector((state: RootState) => state.auth)
   const settings = [
-    { title: 'Profile', action: 'profile' },
-    //{ title: 'Logout', action: logout },
+    //{ title: 'Profile', action: 'profile' },
+    { title: 'Logout', action: logout },
   ];
   const pages = isAuthenticated
     ? [

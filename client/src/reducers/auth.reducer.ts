@@ -13,6 +13,9 @@ interface AUTH_Action {
     user: IUser
   }
 }
+interface LOGOUT_Action {
+  type: ActionType.LOGOUT,   
+}
 type IDEFAULT_STATE = {isAuthenticated: boolean, user: IUser, errorMessage: string}
 let DEFAULT_STATE: IDEFAULT_STATE= {
   isAuthenticated: false,
@@ -25,7 +28,7 @@ let DEFAULT_STATE: IDEFAULT_STATE= {
   },
   errorMessage: "",
 };
-export type Action = AUTH_Action 
+export type Action = AUTH_Action | LOGOUT_Action
 const authReducer = (state = DEFAULT_STATE, action: Action) => {
   switch (action.type) {
     case ActionType.AUTH:
@@ -42,6 +45,13 @@ const authReducer = (state = DEFAULT_STATE, action: Action) => {
         isAuthenticated: action.data.user && true,
         user: action.data.user,
       };  
+    case ActionType.LOGOUT:
+      localStorage.clear()
+      localStorage.setItem(
+        "userInfo", JSON.stringify({isAuthenticated:false})
+      );
+      window.location.replace('/')
+      return DEFAULT_STATE;  
     default:
       return state;
   }

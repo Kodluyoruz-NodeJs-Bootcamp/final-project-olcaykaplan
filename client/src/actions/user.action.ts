@@ -13,12 +13,12 @@ export const fetchUser = () => async (dispatch:Dispatch<Action>) => {
   }
 };
 
-export const fetchOwnMovieList = () => async (dispatch: Dispatch<ActionMovie>) => {
+export const logout = () => async (dispatch:Dispatch<Action>) => {
   try {
-      const {data} = await api.fetchOwnMovieList()
-      console.log("fetchOwnMovieList DDDDD || data",data)
-      dispatch({type:ActionType.MY_MOVIE_LIST, data})
+      const {data} = await api.logout()
+      dispatch({type: ActionType.LOGOUT})
   } catch (error) {
-      console.log("error",error)
+    console.log(error)
   }
-}
+};
+

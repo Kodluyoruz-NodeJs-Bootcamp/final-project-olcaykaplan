@@ -1,5 +1,5 @@
 import express from "express"
-import {Logout, CreateUser, AuthenticatedUser} from "../controllers/auth.controller"
+import {Logout, AuthenticatedUser} from "../controllers/auth.controller"
 import {isUserAuthenticated} from "../middleware/checkAuth"
 import passport from "passport";
 import {sign} from "jsonwebtoken";
@@ -8,10 +8,10 @@ const CLIENT_URL = "http://localhost/3000"
 const router = express.Router();
 const TWO_HOURS = 1000 * 60 * 60 * 2;
 
-router.post('/logout', Logout)
-//router.post('/signin', Login)
-router.post('/signup', CreateUser)
+router.get('/logout', Logout)
 router.get('/user-auth', isUserAuthenticated, AuthenticatedUser)
+
+// Google
 router.get("/google", passport.authenticate("google", {session:false, scope: ["profile", "email"] }));
 
 router.get(
@@ -28,6 +28,8 @@ router.get(
     res.redirect("http://localhost:3000/login");
   }
 );
+
+// FACEBOOK
 router.get("/facebook", passport.authenticate("facebook", { scope: ["profile", "email"] }));
 
 router.get(
