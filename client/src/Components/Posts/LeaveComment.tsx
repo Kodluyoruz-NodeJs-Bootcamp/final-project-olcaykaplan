@@ -2,19 +2,24 @@ import { Grid, IconButton, TextField } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { useState } from "react";
 import { addNewCommentForMovie } from "../../actions/movie.action";
+import { addNewCommentForActor } from "../../actions/actor.action";
 import { useDispatch } from "react-redux";
 import { user } from "../../utils/types";
 interface Props {
-  movieId: number;
-  user: user
+  id: number;
+  user: user;
+  leaveCommentFor: string
 }
 
-const LeaveComment = ({ movieId, user }: Props) => {
+const LeaveComment = ({ id, user, leaveCommentFor }: Props) => {
   const [comment, setComment] = useState("");
   const dispatch = useDispatch();
   const sendComment = () => {
-    console.log("comment", comment);
-    dispatch(addNewCommentForMovie(movieId, comment, user, true));
+    if(leaveCommentFor === "movie")
+    dispatch(addNewCommentForMovie(id, comment, user, true));
+    else 
+    dispatch(addNewCommentForActor(id, comment, user, true));
+    
     setComment("");
 
   };

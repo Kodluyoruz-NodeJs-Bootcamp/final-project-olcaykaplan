@@ -27,7 +27,7 @@ passport.use(
       callbackURL: "http://localhost:5000/api/auth/google/callback",
     },
     async (accessToken: any, refreshToken: any, profile: any, done: any) => {
-      console.log("profile", profile);
+
       const defaultUser:IUser = {
         name: profile.name.givenName,
         surname: profile.name.familyName,
@@ -36,15 +36,22 @@ passport.use(
         googleId: profile.id,
         source: "google",
       };
-      // check this google id is already exist
-      let user = await findUserByGoogleId(profile.id);
-      if (!user) {
-        // if user id does not exist, create new
-        await CreateUser(defaultUser);
-        user = await findUserByGoogleId(profile.id);
-      }
-      console.log("user created or exist: ", user);
-      done(null, user);
+      const currentUser = await User.findOne({email:defaultUser.email});
+
+        // if(currentUser?.source != defaultUser.source){
+        //   // This email already registered by different login option 
+        //   done(null, false, {message: "differentSource"})
+        // } else {
+          // check this google id is already exist
+          let user = await findUserByGoogleId(profile.id);
+          if (!user) {
+            // if user id does not exist, create new
+            await CreateUser(defaultUser);
+            user = await findUserByGoogleId(profile.id);
+          }
+          console.log("user created or exist: ", user);
+          done(null, user);
+     // }
     }
   )
 );

@@ -11,29 +11,34 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../reducers";
 import { comment } from "../../utils/types";
-import { removeComment } from "../../actions/movie.action";
+import { removeCommentForMovie } from "../../actions/movie.action";
+import { removeCommentForActor } from "../../actions/actor.action";
 
 type Props = {
-  commentList: Array<comment>;
-  movieId: number;
+  list: Array<comment>;
+  postId: number;
+  commentsFor: string;
 };
-const Comments = ({ commentList, movieId }: Props) => {
+const Comments = ({ list, postId, commentsFor }: Props) => {
   // user can see the max first 2 comments default
   const [limit, setLimit] = useState(2);
   
   const dispatch = useDispatch();
   const { id } = useSelector((state: RootState) => state.auth).user;
   const allComments = (isAll: boolean) => {
-    let limit = isAll ? commentList.length : 2;
+    let limit = isAll ? list.length : 2;
     setLimit(limit);
   };
   const removeCommentHandler = (commentId: number) => {
-    dispatch(removeComment(commentId, movieId));
+    if(commentsFor === "movie")
+    dispatch(removeCommentForMovie(commentId, postId, "movie"));
+    else
+    dispatch(removeCommentForActor(commentId, postId, "actor"));
   };
 
   return (
     <>
-      {commentList.slice(0, limit).map((comment: comment) => (
+      {list.slice(0, limit).map((comment: comment) => (
         <>
           <Grid container spacing={2}>
             <Grid item>
@@ -78,7 +83,7 @@ const Comments = ({ commentList, movieId }: Props) => {
       ))}
 
       {/*Show All comments or just first two */}
-      {commentList.length > 2 ? (
+      {list.length > 2 ? (
         limit === 2 ? (
           <Typography
             variant="subtitle2"

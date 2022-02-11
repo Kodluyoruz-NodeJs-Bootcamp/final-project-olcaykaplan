@@ -1,12 +1,12 @@
 import { Grid, Box, TextField, Button, Typography } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
-import {updateMovie} from "../actions/movie.action"
+import { updateMovie } from "../actions/movie.action";
 
 const UpdateMovie = () => {
   const history = useHistory();
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   var state: any = history?.location?.state;
   console.log("state", state);
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -17,11 +17,10 @@ const UpdateMovie = () => {
       content: data.get("content"),
       releasedYear: data.get("releasedYear"),
       originalLanguage: data.get("originalLanguage"),
-    };   
- 
-     dispatch((updateMovie(movieData, state.id)))      
-     history.goBack();
- 
+    };
+
+    dispatch(updateMovie(movieData, state.id, "movie"));
+    history.goBack();
   };
   return (
     <Grid container justifyContent="center">
@@ -51,7 +50,6 @@ const UpdateMovie = () => {
                   label="Movie Content"
                   name="content"
                   defaultValue={state.content}
-
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -73,7 +71,6 @@ const UpdateMovie = () => {
                   label="Original Language"
                   name="originalLanguage"
                   defaultValue={state.originalLanguage}
-
                 />
               </Grid>
               <Grid item xs={12} sm={6}>

@@ -24,6 +24,7 @@ router.get(
     const token = sign({user}, "secret", {
       expiresIn: TWO_HOURS,
     });
+    console.log("req",req)
     res.cookie('jwt', token, {httpOnly: true, maxAge:TWO_HOURS})
     res.redirect("http://localhost:3000/login");
   }

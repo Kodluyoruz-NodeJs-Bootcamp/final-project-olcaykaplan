@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { Not } from "typeorm";
 import { MovieComment } from "../entities/movieComments.entity";
 import { MovieLikes } from "../entities/movieLikes.entity";
 import { Movie } from "../entities/movies.entity";
@@ -10,7 +11,6 @@ export const AddMovie = async (req: Request, res: Response) => {
     const {id} = req["user"] as IUser
     const body = req.body;
     const user = await User.findOne(id);
-    console.log("user",user)
     const movie = await Movie.save({
       ...body,
       user,
@@ -21,7 +21,7 @@ export const AddMovie = async (req: Request, res: Response) => {
 
 export const UpdateMovie = async (req: Request, res: Response) => {
   try {
-    const movieId = req.params.id;
+    const movieId = req.params.postId;
     const body = req.body;
     console.log("movieId", movieId);
     const update = await Movie.update(movieId, {
@@ -34,7 +34,7 @@ export const UpdateMovie = async (req: Request, res: Response) => {
 // Delete movie by params movie id
 export const DeleteMovie = async (req: Request, res: Response) => {
   try {
-    const movieId = req.params.id;
+    const movieId = req.params.postId;
     await Movie.delete(movieId);
     res.status(204).send(true);
   } catch (error) {
@@ -44,7 +44,8 @@ export const DeleteMovie = async (req: Request, res: Response) => {
 
 export const GetAllMovies = async (req: Request, res: Response) => {
   try {
-    const movies = await Movie.find();
+    const {id} = req["user"] as IUser
+    const movies = await Movie.find({order:{createDate:"DESC"}, where:{user: {id: Not(id)}}});
     res.status(200).send(movies);
   } catch (error) {
     console.log("GetAllMovies | error", error);
@@ -52,9 +53,7 @@ export const GetAllMovies = async (req: Request, res: Response) => {
 };
 export const GetOwnMovieList = async (req: Request, res: Response) => {
   try {
-    console.log("GetOwnMovieList")
     const {id} = req["user"] as IUser
-    console.log("id",id)
     const movieList = await Movie.find({relations:["user"], where:{user :{id:id}}, order:{createDate:"DESC"}});
  
     let ownMovieList = await Promise.all(movieList.map(async(movie) => {
@@ -70,6 +69,7 @@ export const GetOwnMovieList = async (req: Request, res: Response) => {
   }
 };
 
+// Not used for now
 export const GetAllMoviesByFilter = async (req: Request, res: Response) => {
   try {
     const filter = req.body.filter;
@@ -85,7 +85,6 @@ export const GetAllMoviesByFilter = async (req: Request, res: Response) => {
 export const ChangePublishValueForMovie = async (req: Request, res: Response) => {
   try {
     const {movieId, isPublished} = req.body;
-    console.log("movieId | isPublished", movieId, " | ",isPublished)
     await Movie.update(Number(movieId), { isPublished });
     res.status(202).send("success");
   } catch (error) {}
@@ -117,7 +116,6 @@ export const AddCommentForMovie = async (req: Request, res: Response) => {
 export const DeleteComment = async (req: Request, res: Response) => {
   try {
     const commentId = req.params.commentId;
-    console.log("commentId", commentId);
     await MovieComment.delete(commentId);
     res.status(204).send(true);
   } catch (error) {
@@ -138,26 +136,11 @@ export const GetAllCommentsOfMovie = async (movieId:number) => {
     return resComments;
   } catch (error) {}
 };
-export const GetAllCommentsOfMovieRQ = async (req: Request, res: Response) => {
-  try {
-    const comments = await MovieComment.find({
-      relations: ["user"],
-      where: { movie: { id: req.body.movieId } },
-    });
-    const resComments = comments.map(comment => {
-      const {password, googleId, facebookId, source, ...user} = comment.user
-      return {id: comment.id, comment: comment.comment, user}
-    })
-    res.send(resComments);
-  } catch (error) {}
-};
-
 // COMMENT END
 
 // LIKE START
 export const AddLikeForMovie = async (req: Request, res: Response) => {
   try {
-    console.log("AddLikeForMovie: ", req.body);
     const {id} = req["user"] as IUser
     const movieId = req.params.movieId
     const user = await User.findOne(id);
@@ -176,7 +159,6 @@ export const AddLikeForMovie = async (req: Request, res: Response) => {
 export const DeleteLike = async (req: Request, res: Response) => {
   try {
     const likeId = req.params.likeId;
-    console.log("likeId",likeId)
     await MovieLikes.delete(likeId);
     res.status(204).send(true);
   } catch (error) {
@@ -196,20 +178,6 @@ export const GetAllLikesOfMovie = async (movieId:number) => {
       return {id:like.id, movieId:like.movie.id, user}
     })
     return resLikes
-  } catch (error) {}
-};
-export const GetAllLikesOfMovieRQ = async (req: Request, res: Response) => {
-  try {
-    console.log("hello ")
-    const likes = await MovieLikes.find({
-      relations: [ "user"],
-      where: { movie: { id: req.body.movieId } },
-    });
-    const resLikes = likes.map(like => {
-      const {password, googleId, facebookId, source, ...user} = like.user
-      return user
-    })
-    res.send(resLikes)
   } catch (error) {}
 };
 

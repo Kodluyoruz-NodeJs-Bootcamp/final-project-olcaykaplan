@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { Not } from "typeorm";
 import { ActorComment } from "../entities/actorComments.entity";
 import { ActorLikes } from "../entities/actorLikes.entity";
 import { Actor } from "../entities/actors.entity";
@@ -7,19 +8,14 @@ import { IUser } from "./auth/passportGoogle.auth";
 
 export const AddActor = async (req: Request, res: Response) => {
   try {
-    console.log("add Actor")
     const {id} = req["user"] as IUser
     const body = req.body;
-    console.log("userId",id)
-    console.log("body",body)
     const user = await User.findOne(id);
-    console.log("user")
     const actor = await Actor.save({
       ...body,
       user,
     });
-    res.send(actor);
-    console.log("actor",actor)
+    res.status(201).send(actor);
   } catch (error) {
     console.log("AddActor | error",error)
   }
@@ -27,7 +23,7 @@ export const AddActor = async (req: Request, res: Response) => {
 
 export const UpdateActor = async (req: Request, res: Response) => {
   try {
-    const actorId = req.params.id;
+    const actorId = req.params.postId;
     const body = req.body;
     const update = await Actor.update(actorId, {
       ...body,
@@ -39,7 +35,7 @@ export const UpdateActor = async (req: Request, res: Response) => {
 // Delete actor by params actor id
 export const DeleteActor = async (req: Request, res: Response) => {
   try {
-    const actorId = req.params.id;
+    const actorId = req.params.postId;
     await Actor.delete(actorId);
     res.status(204).send(true);
   } catch (error) {
@@ -49,7 +45,8 @@ export const DeleteActor = async (req: Request, res: Response) => {
 
 export const GetAllActors = async (req: Request, res: Response) => {
   try {
-    const actors = await Actor.find();
+    const {id} = req["user"] as IUser
+    const actors = await Actor.find({order:{createDate:"DESC"}, where:{id: Not(id)}});
     res.status(200).send(actors);
   } catch (error) {
     console.log("GetAllActors | error", error);
@@ -58,13 +55,20 @@ export const GetAllActors = async (req: Request, res: Response) => {
 export const GetOwnActorList = async (req: Request, res: Response) => {
   try {
     const {id} = req["user"] as IUser
-    const ownActorList = await Actor.find({relations:["comments","likes"], where:{user :{id}}});
+    const actorList = await Actor.find({relations:["user"], where:{user :{id:id}}, order:{createDate:"DESC"}});
+    let ownActorList = await Promise.all(actorList.map(async(actor) => {
+      const comments = await GetAllCommentsOfActor(actor.id)
+      const likes = await GetAllLikesOfActor(actor.id)
+      const {password, facebookId, googleId, source, ...user} = actor.user
+      return {...actor, comments, likes, user}
+    }));
     res.status(200).send(ownActorList);
   } catch (error) {
     console.log("GetAllActors | error", error);
   }
 };
 
+// Not used for now
 export const GetAllActorsByFilter = async (req: Request, res: Response) => {
   try {
     const filter = req.body.filter;
@@ -85,38 +89,29 @@ export const ChangePublishValueForActor = async (req: Request, res: Response) =>
   } catch (error) {}
 };
 
-
 // COMMENT START
 
 // Add new Comment for Actor
 export const AddCommentForActor = async (req: Request, res: Response) => {
   try {
-    const { userId, actorId, ...body } = req.body;
-    const user = await User.findOne(userId);
+    const {id} = req["user"] as IUser
+
+    const { actorId, ...body } = req.body;
+    const user = await User.findOne(id);
     const actor = await Actor.findOne(actorId);
-    const comment = await ActorComment.save({
+    const addedComment = await ActorComment.save({
       ...body,
       user,
       actor,
     });
-    res.status(201).send(comment);
-  } catch (error) {}
-};
-
-export const UpdateComment = async (req: Request, res: Response) => {
-  try {
-    const commentId = req.params.id;
-    const comment = req.body.comment;
-    const update = await ActorComment.update(commentId, { comment });
-
-    res.status(202).send(update);
+    res.status(201).send(addedComment);
   } catch (error) {}
 };
 
 // Delete Comment by Comment ID
 export const DeleteComment = async (req: Request, res: Response) => {
   try {
-    const commentId = req.body.commentId;
+    const commentId = req.params.commentId;
     await ActorComment.delete(commentId);
     res.status(204).send(true);
   } catch (error) {
@@ -124,54 +119,63 @@ export const DeleteComment = async (req: Request, res: Response) => {
   }
 };
 
-export const GetAllCommentsOfActor = async (req: Request, res: Response) => {
+export const GetAllCommentsOfActor = async (actorId:number) => {
   try {
-    const actorId = req.body.actorId;
     const comments = await ActorComment.find({
-      relations: ["actor", "user"],
+      relations: ["user"],
       where: { actor: { id: actorId } },
     });
-    res.status(200).send(comments);
+    const resComments = comments.map(comment => {
+      const {password, googleId, facebookId, source, ...user} = comment.user
+      return {id: comment.id, comment: comment.comment, user}
+    })
+    return resComments;
   } catch (error) {}
 };
-
 // COMMENT END
 
 // LIKE START
 export const AddLikeForActor = async (req: Request, res: Response) => {
   try {
-    const { userId, actorId, ...body } = req.body;
-    const user = await User.findOne(userId);
+    const {id} = req["user"] as IUser
+    const actorId = req.params.actorId
+    const user = await User.findOne(id);
     const actor = await Actor.findOne(actorId);
-    const likes = await ActorLikes.save({
+    const body:any = {user, actor}
+    const savedLike = await ActorLikes.save({
       ...body,
       user,
       actor,
     });
-    res.status(201).send(likes);
+    const {password, googleId, facebookId, source, ...userData} = savedLike.user
+    const like = {id:savedLike.id, actorId:savedLike.actor.id, user:userData}
+    res.status(201).send(like);
   } catch (error) {}
 };
 
 // Delete Like by Like ID
 export const DeleteLike = async (req: Request, res: Response) => {
   try {
-    const likeId = req.body.likeId;
-    console.log("commentId", likeId);
-    await ActorComment.delete(likeId);
+    const likeId = req.params.likeId;
+    await ActorLikes.delete(likeId);
     res.status(204).send(true);
   } catch (error) {
     console.log("DeleteComment | error: ", error);
   }
 };
 
-export const GetAllLikesOfActor = async (req: Request, res: Response) => {
+
+export const GetAllLikesOfActor = async (actorId:number) => {
   try {
-    const actorId = req.body.actorId;
-    const comments = await ActorComment.find({
+    const likes = await ActorLikes.find({
       relations: ["actor", "user"],
       where: { actor: { id: actorId } },
     });
-    res.status(200).send(comments);
+    const resLikes = likes.map(like => {
+      const {password, googleId, facebookId, source, ...user} = like.user
+      return {id:like.id, actorId:like.actor.id, user}
+    })
+    return resLikes
   } catch (error) {}
 };
 

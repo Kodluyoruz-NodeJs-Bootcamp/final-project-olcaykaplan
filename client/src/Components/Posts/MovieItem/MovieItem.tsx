@@ -22,7 +22,7 @@ import {
   removeLikeMovie,
   deleteMovie,
 } from "../../../actions/movie.action";
-import { like, movie } from "../../../utils/types";
+import { movieLike, movie } from "../../../utils/types";
 import { RootState } from "../../../reducers";
 import { useHistory } from "react-router";
 
@@ -42,20 +42,20 @@ const MovieItem = ({ movieList }: Props) => {
   const likeMovieHandler = (movieId: number) => {
     dispatch(likeMovie(movieId));
   };
-  const removeLikeMovieHandler = (movieId: number, likes: Array<like>) => {
+  const removeLikeMovieHandler = (movieId: number, likes: Array<movieLike>) => {
     const likeId: number = likes?.find((like) => like.user.id === id)?.id || 0;
     dispatch(removeLikeMovie(movieId, likeId));
   };
   const updateMovieHandler = (movie: movie) => {
     history.push({
-      pathname: "/update-post",
+      pathname: "/update-movie",
       state: movie,
     });
   };
   const deleteMovieHandler = (movieId:number) => {
     let confirmAction = window.confirm("Are you sure to delete the movie?");
     if(confirmAction) {
-        dispatch(deleteMovie(movieId))
+        dispatch(deleteMovie(movieId, "movie"))
     }
     
   }
@@ -143,10 +143,10 @@ const MovieItem = ({ movieList }: Props) => {
           {movie.isPublished ? (
             <>
               <Box>
-                <Comments movieId={movie.id} commentList={movie.comments} />
+                <Comments postId={movie.id} list={movie.comments} commentsFor={"movie"}/>
               </Box>
               <Box>
-                <LeaveComment movieId={movie.id} user={movie.user} />
+                <LeaveComment id={movie.id} user={movie.user} leaveCommentFor={"movie"}/>
               </Box>
             </>
           ) : null}

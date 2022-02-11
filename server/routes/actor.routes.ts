@@ -8,37 +8,34 @@ import {
   ChangePublishValueForActor,
   
   AddCommentForActor,
-  UpdateComment,
   DeleteComment,
-  GetAllCommentsOfActor,
   
   AddLikeForActor,
-  GetAllLikesOfActor,
   DeleteLike,
 } from "../controllers/actor.controller";
-import {isUserAuthenticated} from '../middleware/checkAuth'; 
+import {isUserAuthenticated, doesUserHasAuthorityForComment, doesUserHasAuthorityForPost} from '../middleware/checkAuth'; 
 const router = express.Router();
 
-
 // CONMMENT
-router.post("/actor/comment", AddCommentForActor);
-router.put("/actor/comment/:id", UpdateComment);
-router.delete("/actor/comment", DeleteComment);
-router.get("/actor/comments", GetAllCommentsOfActor);
+router.post("/actor/comment",isUserAuthenticated, AddCommentForActor);
+router.delete("/actor/comment/:commentId/:postType", isUserAuthenticated, doesUserHasAuthorityForComment, DeleteComment)
 
 //LIKE
-router.post("/actor/like", AddLikeForActor);
-router.delete("/actor/like", DeleteLike);
-router.get("/actor/likes", GetAllLikesOfActor);
+router.post("/actor/like/:actorId",isUserAuthenticated, AddLikeForActor);
+router.delete("/actor/like/:likeId",isUserAuthenticated,  DeleteLike)
+
+
 
 //Actor
-router.post("/actor/publish", ChangePublishValueForActor)
-router.get("/actor/discover", GetAllActors);
-router.get("/own-actor-list",isUserAuthenticated, GetOwnActorList);
+router.post("/actor/publish",isUserAuthenticated, ChangePublishValueForActor)
+router.get("/actor/discover",isUserAuthenticated, GetAllActors);
+router.get("/own-actor-list",isUserAuthenticated, GetOwnActorList )
 
-router.post("/actor", isUserAuthenticated, AddActor);
-router.delete("/actor/:id", DeleteActor);
-router.put("/actor/:id", UpdateActor);
+router.post("/actor",isUserAuthenticated, AddActor);
+router.delete("/actor/:postId/:postType", isUserAuthenticated, doesUserHasAuthorityForPost, DeleteActor);
+//???? doesUserHasAuthorityForPost
+router.put("/actor/:postId/:postType",isUserAuthenticated, doesUserHasAuthorityForPost, UpdateActor);
+
 
 
 
