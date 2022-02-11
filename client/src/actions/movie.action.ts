@@ -11,6 +11,27 @@ export const addNewMovie = (movieData:movieRegister) => async (dispatch: Dispatc
         console.log("error",error)
     }
 }
+export const updateMovie = (movieData:movieRegister, movieId: number) => async (dispatch: Dispatch<Action>) => {
+    try {
+        const {data} = await api.updateMovie(movieData, movieId)
+    } catch (error) {
+        console.log("error",error)
+    }
+}
+export const deleteMovie = (movieId: number) => async (dispatch: Dispatch<Action>) => {
+    console.log("movieId",movieId)
+      await api.deleteMovie(movieId)
+       .then((response) => {
+           dispatch({type:ActionType.DELETE_MOVIE, data:{movieId}})
+       })
+       .catch((error)=> {
+            if (error.response){
+                console.log(error.response.data)
+                // console.log(error.response.status)
+                // console.log(error.response.headers)
+            }
+        })
+}
 export const addNewCommentForMovie = (movieId:number,movieComment:string, user:user, isOwnMovie:boolean) => async (dispatch: Dispatch<Action>) => {
     try {
         let {data} = await api.addNewCommentForMovie(movieId,movieComment)

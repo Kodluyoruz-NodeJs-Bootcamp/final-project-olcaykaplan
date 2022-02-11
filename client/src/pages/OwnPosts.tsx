@@ -24,24 +24,27 @@ const OwnPosts = () => {
   const dispatch = useDispatch();
   // const {myList} = useSelector((state:RootState) => state.actor)
   const { ownList } = useSelector((state: RootState) => state.movie);
+  const user = useSelector((state: RootState) => state.auth).user;
 
   // console.log("myList",myList)
   useEffect(() => {
     dispatch(fetchOwnMovieList());
   }, []);
   return (
-    <Grid container justifyContent="center" sx={{backgroundColor:"#F0A500"}}>
-      <Grid item md={12} sx={{height:"200px" }}>
-        user information will be here
+    <Grid container justifyContent="center">
+      <Grid item md={12} xs={12} sx={{height:"200px", backgroundColor:"#f6c966" }} textAlign="center">
+     <img src={user.picture ? user.picture : "/static/images/avatar/2.jpg"} style={{borderRadius:"50%"}}/> 
+     <Typography variant="h3">{user.name + " " + user.surname}</Typography>
+     <Typography variant="body1">{user.email}</Typography>
       </Grid>
-      <Grid item md={12}>
-        types here, which list should listed below (movie or actor)
-      </Grid>
+      
+   
       <Grid
         item
         md={8}
         xs={12}
-        textAlign="center"        
+        textAlign="center" 
+              
       >
         <h1>Movies Here</h1>
         <Grid

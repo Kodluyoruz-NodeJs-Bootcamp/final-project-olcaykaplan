@@ -7,7 +7,6 @@ import {
   Typography,
 } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
-import EditIcon from "@mui/icons-material/Edit";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../reducers";
@@ -31,7 +30,7 @@ const Comments = ({ commentList, movieId }: Props) => {
   const removeCommentHandler = (commentId: number) => {
     dispatch(removeComment(commentId, movieId));
   };
- 
+
   return (
     <>
       {commentList.slice(0, limit).map((comment: comment) => (
@@ -47,7 +46,7 @@ const Comments = ({ commentList, movieId }: Props) => {
                 }
               />
             </Grid>
-
+                
             <Grid justifyContent="left" item xs zeroMinWidth>
               <h4 style={{ margin: 0, textAlign: "left" }}>
                 {comment.user.name + " " + comment.user.surname}

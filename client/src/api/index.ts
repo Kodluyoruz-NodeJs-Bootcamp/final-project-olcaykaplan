@@ -17,6 +17,9 @@ export const fetchDiscoverActorList = () => API.get("/actor/discover")
 
 // Movie
 export const addNewMovie = (movieData:movieRegister) => API.post("/movie", movieData)
+export const updateMovie = (movieData:movieRegister, movieId:number) => API.put(`/movie/${movieId}`, movieData)
+export const deleteMovie = (movieId:number) => API.delete(`/movie/${movieId}`)
+
 export const publishMovie = (data:object) => API.post("/movie/publish", data)
 export const fetchOwnMovieList = () => API.get("/own-movie-list")
 export const fetchDiscoverMovieList = () => API.get("/movie/discover")

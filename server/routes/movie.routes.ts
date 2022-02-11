@@ -15,7 +15,7 @@ import {
   GetAllLikesOfMovieRQ,
   DeleteLike
 } from "../controllers/movie.controller";
-import {isUserAuthenticated, doesUserHasAuthorityForRemoveComment,} from '../middleware/checkAuth'; 
+import {isUserAuthenticated, doesUserHasAuthorityForRemoveComment, doesUserHasAuthorityForDeletePost} from '../middleware/checkAuth'; 
 
 const router = express.Router();
 
@@ -37,8 +37,8 @@ router.get("/movie/discover", GetAllMovies);
 router.get("/own-movie-list",isUserAuthenticated, GetOwnMovieList )
 
 router.post("/movie",isUserAuthenticated, AddMovie);
-router.delete("/movie/:id", DeleteMovie);
-router.put("/movie/:id", UpdateMovie);
+router.delete("/movie/:id", isUserAuthenticated, doesUserHasAuthorityForDeletePost ,DeleteMovie);
+router.put("/movie/:id",isUserAuthenticated, UpdateMovie);
 
 
 

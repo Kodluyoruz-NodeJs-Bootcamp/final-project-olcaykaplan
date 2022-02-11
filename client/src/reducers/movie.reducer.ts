@@ -12,6 +12,12 @@ interface DISCOVER_MOVIE_LIST_Action {
   };
 }
 
+interface DELETE_MOVIE_Action {
+  type: ActionType.DELETE_MOVIE;
+  data: {
+    movieId: number;
+  };
+}
 interface ADD_COMMENT_FOR_MOVIE_Action {
   type: ActionType.ADD_COMMENT_FOR_MOVIE;
   data: comment & {
@@ -43,6 +49,7 @@ interface REMOVE_LIKE_MOVIE_Action {
 }
 
 export type Action =
+  | DELETE_MOVIE_Action
   | MY_MOVIE_LIST_Action
   | DISCOVER_MOVIE_LIST_Action
   | ADD_COMMENT_FOR_MOVIE_Action
@@ -69,8 +76,15 @@ const movieReducer = (state = DEFAULT_STATE, action: Action) => {
     case ActionType.DISCOVER_MOVIE_LIST:
       return {
         ...state,
-        ownList: action.data.discoverMovieList,
+        discoverList: action.data.discoverMovieList,
       };
+      case ActionType.DELETE_MOVIE:
+        var {movieId} = action.data
+        var updateOwnList = state.ownList.filter((m) => m.id !== movieId).map(m => m)
+        return {
+          ...state,
+          ownList: updateOwnList
+        };
     case ActionType.ADD_COMMENT_FOR_MOVIE:
       var { movieId, ...data } = action.data;
 

@@ -14,6 +14,7 @@ import HomePage from "./pages/HomePage";
 import CreatePost from "./pages/CreatePost";
 import OwnPosts from "./pages/OwnPosts";
 import DiscoverPosts from "./pages/DiscoverPosts";
+import UpdateMovie from "./pages/UpdateMovie";
 
 function App() {
   const google = () => {
@@ -47,6 +48,11 @@ function App() {
         <Route path="/user/own-posts/" exact>
           <Layout isPrivate={true}>
             <OwnPosts/>
+          </Layout>
+        </Route>
+        <Route path="/update-post" exact>
+          <Layout isPrivate={true}>
+            <UpdateMovie/>
           </Layout>
         </Route>
 
