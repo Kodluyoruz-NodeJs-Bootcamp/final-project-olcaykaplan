@@ -7,7 +7,7 @@ import { MovieComment } from "../entities/movieComments.entity";
 import { Movie } from "../entities/movies.entity";
 export const isUserAuthenticated = async (req: Request, res: Response, next: NextFunction ) => {
   const token = req.cookies.jwt;
-  const data: any = token ? await verify(token, "secret") : false;
+  const data: any = token ? await verify(token, process.env.JWT_SECRET as string) : false;
   if (data) {
     req["user"] = data.user;
     next();

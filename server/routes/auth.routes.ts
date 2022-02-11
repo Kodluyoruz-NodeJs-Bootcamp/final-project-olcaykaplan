@@ -4,6 +4,7 @@ import {isUserAuthenticated} from "../middleware/checkAuth"
 import passport from "passport";
 import {sign} from "jsonwebtoken";
 import {IUser} from '../controllers/auth/passportGoogle.auth';
+import "dotenv/config"
 const CLIENT_URL = "http://localhost/3000"
 const router = express.Router();
 const TWO_HOURS = 1000 * 60 * 60 * 2;
@@ -22,6 +23,7 @@ router.get(
   }),(req, res) => {
      const user = req.user as IUser
     const token = sign({user}, "secret", {
+    const token = sign({user}, process.env.JWT_SECRET as string, {
       expiresIn: TWO_HOURS,
     });
     console.log("req",req)
