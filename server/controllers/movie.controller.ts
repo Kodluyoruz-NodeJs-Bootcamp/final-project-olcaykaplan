@@ -105,7 +105,6 @@ export const ChangePublishValueForMovie = async (
 export const AddCommentForMovie = async (req: Request, res: Response) => {
   try {
     const { id } = req["user"] as IUser;
-    console.log("req.body", req.body);
     const { movieId, ...body } = req.body;
     const user = await User.findOne(id);
     const movie = await Movie.findOne(movieId);

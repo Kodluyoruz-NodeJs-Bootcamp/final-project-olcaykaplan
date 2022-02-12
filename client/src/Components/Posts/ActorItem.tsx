@@ -28,8 +28,9 @@ import { useHistory } from "react-router";
 
 interface Props {
   actorList: Array<actor>;
+  isDiscover: boolean;
 }
-const ActorItem = ({ actorList }: Props) => {
+const ActorItem = ({ actorList, isDiscover }: Props) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { id } = useSelector((state: RootState) => state.auth).user;
@@ -40,11 +41,11 @@ const ActorItem = ({ actorList }: Props) => {
     dispatch(publishActor(actorId, publishValue));
   };
   const likeActorHandler = (actorId: number) => {
-    dispatch(likeActor(actorId));
+    dispatch(likeActor(actorId, isDiscover));
   };
   const removeLikeActorHandler = (actorId: number, likes: Array<actorLike>) => {
     const likeId: number = likes?.find((like) => like.user.id === id)?.id || 0;
-    dispatch(removeLikeActor(actorId, likeId));
+    dispatch(removeLikeActor(actorId, likeId, isDiscover));
   };
   const updateActorHandler = (actor: actor) => {
     history.push({
@@ -151,6 +152,7 @@ const ActorItem = ({ actorList }: Props) => {
                   postId={actor.id}
                   list={actor.comments}
                   commentsFor={"actor"}
+                  isDiscover={isDiscover}
                 />
               </Box>
               <Box>
@@ -158,6 +160,7 @@ const ActorItem = ({ actorList }: Props) => {
                   id={actor.id}
                   user={actor.user}
                   leaveCommentFor={"actor"}
+                  isDiscover={isDiscover}
                 />
               </Box>
             </>

@@ -18,8 +18,9 @@ type Props = {
   list: Array<comment>;
   postId: number;
   commentsFor: string;
+  isDiscover: boolean;
 };
-const Comments = ({ list, postId, commentsFor }: Props) => {
+const Comments = ({ list, postId, commentsFor, isDiscover }: Props) => {
   // user can see the max first 2 comments default
   const [limit, setLimit] = useState(2);
   
@@ -31,11 +32,11 @@ const Comments = ({ list, postId, commentsFor }: Props) => {
   };
   const removeCommentHandler = (commentId: number) => {
     if(commentsFor === "movie")
-    dispatch(removeCommentForMovie(commentId, postId, "movie"));
+    dispatch(removeCommentForMovie(commentId, postId, "movie", isDiscover));
     else
-    dispatch(removeCommentForActor(commentId, postId, "actor"));
+    dispatch(removeCommentForActor(commentId, postId, "actor", isDiscover));
   };
-
+  console.log("LIST -------- ",list)
   return (
     <>
       {list.slice(0, limit).map((comment: comment) => (

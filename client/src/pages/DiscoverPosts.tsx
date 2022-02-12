@@ -47,9 +47,9 @@ const DiscoverPosts = () => {
           sx={{ padding: { xs: "20px 0px", md: "60px" } }}
         >
           {tabIndex === 0 ? (
-            <MovieItem movieList={discoverMovieList} />
+            <MovieItem movieList={discoverMovieList} isDiscover={true}/>
           ) : (
-             <ActorItem actorList={discoverActorList} />   
+             <ActorItem actorList={discoverActorList} isDiscover={true} />   
           )}
         </Grid>
       </Grid>

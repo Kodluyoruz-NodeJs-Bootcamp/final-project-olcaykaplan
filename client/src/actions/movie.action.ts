@@ -55,7 +55,7 @@ export const fetchOwnMovieList = () => async (dispatch: Dispatch<Action>) => {
 
 export const fetchDiscoverMovieList = () => async (dispatch: Dispatch<Action>) => {
     try {
-        const {data} = await api.fetchDiscoverMovieList()
+        const {data} = await api.fetchDiscoverMovieList()        
         dispatch({type:ActionType.DISCOVER_MOVIE_LIST, data})
 
     } catch (error) {
@@ -65,20 +65,20 @@ export const fetchDiscoverMovieList = () => async (dispatch: Dispatch<Action>) =
 //----------------------------------
 // COMMENT ACTIONS
 
-export const addNewCommentForMovie = (movieId:number,movieComment:string, user:user, isOwnMovie:boolean) => async (dispatch: Dispatch<Action>) => {
+export const addNewCommentForMovie = (movieId:number,movieComment:string, user:user, isDiscover:boolean) => async (dispatch: Dispatch<Action>) => {
     try {
         let {data} = await api.addNewCommentForMovie(movieId,movieComment)
-        dispatch({type:ActionType.ADD_COMMENT_FOR_MOVIE, data:{...data, movieId}})
+        dispatch({type:ActionType.ADD_COMMENT_FOR_MOVIE, data:{...data, movieId, isDiscover}})
     } catch (error) {
         console.log("error",error)
     }
 }
 
-export const removeCommentForMovie = (commentId:number, movieId:number, postType: string ) => async (dispatch: Dispatch<Action>) => {
+export const removeCommentForMovie = (commentId:number, movieId:number, postType: string, isDiscover:boolean ) => async (dispatch: Dispatch<Action>) => {
 
        const data =  await api.removeCommentForMovie(commentId, postType)
        .then((response) => {
-           dispatch({type:ActionType.REMOVE_MOVIE_COMMENT, data:{movieId, commentId}})
+           dispatch({type:ActionType.REMOVE_MOVIE_COMMENT, data:{movieId, commentId, isDiscover}})
        })
        .catch((error)=> {
             if (error.response){
@@ -92,20 +92,20 @@ export const removeCommentForMovie = (commentId:number, movieId:number, postType
 //----------------------------------
 // LIKE ACTIONS
 
-export const likeMovie = (movieId:number) => async (dispatch: Dispatch<Action>) => {
+export const likeMovie = (movieId:number, isDiscover:boolean) => async (dispatch: Dispatch<Action>) => {
     try {
         const {data} = await api.likeMovie(movieId)
        console.log("data",data)
-        dispatch({type:ActionType.LIKE_MOVIE ,data})
+        dispatch({type:ActionType.LIKE_MOVIE ,data:{data, isDiscover}})
     } catch (error) {
         
     }
 }
-export const removeLikeMovie = (movieId:number, likeId:number) => async (dispatch: Dispatch<Action>) => {
+export const removeLikeMovie = (movieId:number, likeId:number, isDiscover:boolean) => async (dispatch: Dispatch<Action>) => {
     try {
         const {data} = await api.removeLikeMovie(likeId)
         console.log("update",data)
-        dispatch({type:ActionType.REMOVE_LIKE_MOVIE , data:{movieId, likeId}})
+        dispatch({type:ActionType.REMOVE_LIKE_MOVIE , data:{movieId, likeId, isDiscover}})
 
     } catch (error) {
         

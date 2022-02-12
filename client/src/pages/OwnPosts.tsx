@@ -21,7 +21,6 @@ const OwnPosts = () => {
   }, []);
 
   const handleTabChange = (event:any, newValue:number) => {
-    console.log("newValue",newValue)
     setTabIndex(newValue)
   }
   return (
@@ -60,9 +59,9 @@ const OwnPosts = () => {
           sx={{ padding: { xs: "20px 0px", md: "60px" } }}
         >
           {tabIndex === 0 ? (
-            <MovieItem movieList={ownMovieList} />
+            <MovieItem movieList={ownMovieList} isDiscover={false}/>
           ) : (
-            <ActorItem actorList={ownActorList} />
+            <ActorItem actorList={ownActorList} isDiscover={false}/>
           )}
         </Grid>
       </Grid>

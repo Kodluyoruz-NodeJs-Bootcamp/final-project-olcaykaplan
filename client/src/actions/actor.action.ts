@@ -66,20 +66,20 @@ export const fetchDiscoverActorList = () => async (dispatch: Dispatch<Action>) =
 //----------------------------------
 // COMMENT ACTIONS
 
-export const addNewCommentForActor = (actorId:number,actorComment:string, user:user, isOwnActor:boolean) => async (dispatch: Dispatch<Action>) => {
+export const addNewCommentForActor = (actorId:number,actorComment:string, user:user, isDiscover:boolean) => async (dispatch: Dispatch<Action>) => {
   try {
       let {data} = await api.addNewCommentForActor(actorId,actorComment)
-      dispatch({type:ActionType.ADD_COMMENT_FOR_ACTOR, data:{...data, actorId}})
+      dispatch({type:ActionType.ADD_COMMENT_FOR_ACTOR, data:{...data, actorId, isDiscover}})
   } catch (error) {
       console.log("error",error)
   }
 }
 
-export const removeCommentForActor = (commentId:number, actorId:number, postType:string ) => async (dispatch: Dispatch<Action>) => {
+export const removeCommentForActor = (commentId:number, actorId:number, postType:string, isDiscover:boolean) => async (dispatch: Dispatch<Action>) => {
 
      const data =  await api.removeCommentForActor(commentId, postType)
      .then((response) => {
-         dispatch({type:ActionType.REMOVE_ACTOR_COMMENT, data:{actorId, commentId}})
+         dispatch({type:ActionType.REMOVE_ACTOR_COMMENT, data:{actorId, commentId, isDiscover}})
      })
      .catch((error)=> {
           if (error.response){
@@ -93,18 +93,18 @@ export const removeCommentForActor = (commentId:number, actorId:number, postType
 //----------------------------------
 // LIKE ACTIONS
 
-export const likeActor = (actorId:number) => async (dispatch: Dispatch<Action>) => {
+export const likeActor = (actorId:number, isDiscover:boolean) => async (dispatch: Dispatch<Action>) => {
   try {
       const {data} = await api.likeActor(actorId)
-      dispatch({type:ActionType.LIKE_ACTOR ,data})
+      dispatch({type:ActionType.LIKE_ACTOR ,data:{data, isDiscover}})
   } catch (error) {
       
   }
 }
-export const removeLikeActor = (actorId:number, likeId:number) => async (dispatch: Dispatch<Action>) => {
+export const removeLikeActor = (actorId:number, likeId:number, isDiscover:boolean) => async (dispatch: Dispatch<Action>) => {
   try {
       const {data} = await api.removeLikeActor(likeId)
-      dispatch({type:ActionType.REMOVE_LIKE_ACTOR , data:{actorId, likeId}})
+      dispatch({type:ActionType.REMOVE_LIKE_ACTOR , data:{actorId, likeId, isDiscover}})
 
   } catch (error) {
       

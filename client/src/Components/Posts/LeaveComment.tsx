@@ -8,17 +8,19 @@ import { user } from "../../utils/types";
 interface Props {
   id: number;
   user: user;
-  leaveCommentFor: string
+  leaveCommentFor: string;
+  isDiscover: boolean;
 }
 
-const LeaveComment = ({ id, user, leaveCommentFor }: Props) => {
+const LeaveComment = ({ id, user, leaveCommentFor, isDiscover }: Props) => {
   const [comment, setComment] = useState("");
   const dispatch = useDispatch();
   const sendComment = () => {
+    console.log("comment",comment)
     if(leaveCommentFor === "movie")
-    dispatch(addNewCommentForMovie(id, comment, user, true));
+    dispatch(addNewCommentForMovie(id, comment, user, isDiscover));
     else 
-    dispatch(addNewCommentForActor(id, comment, user, true));
+    dispatch(addNewCommentForActor(id, comment, user, isDiscover));
     
     setComment("");
 

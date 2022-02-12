@@ -106,11 +106,11 @@ export const AddCommentForActor = async (req: Request, res: Response) => {
 
     const { actorId, ...body } = req.body;
     const user = await User.findOne(id);
-    const actor = await Actor.findOne(actorId);
-    const addedComment = await ActorComment.save({
+    const actorFind = await Actor.findOne(actorId);
+    const {actor,...addedComment} = await ActorComment.save({
       ...body,
       user,
-      actor,
+      actor:actorFind,
     });
     res.status(201).send(addedComment);
   } catch (error) {}

@@ -14,7 +14,7 @@ interface MY_MOVIE_LIST_Action {
 }
 interface DISCOVER_MOVIE_LIST_Action {
   type: ActionType.DISCOVER_MOVIE_LIST;
-  data:  Array<movie>; 
+  data: Array<movie>;
 }
 
 interface DELETE_MOVIE_Action {
@@ -27,6 +27,7 @@ interface ADD_COMMENT_FOR_MOVIE_Action {
   type: ActionType.ADD_COMMENT_FOR_MOVIE;
   data: comment & {
     movieId: number;
+    isDiscover: boolean;
   };
 }
 
@@ -35,14 +36,18 @@ interface REMOVE_MOVIE_COMMENT_Action {
   data: {
     movieId: number;
     commentId: number;
+    isDiscover: boolean;
   };
 }
 interface LIKE_MOVIE_Action {
   type: ActionType.LIKE_MOVIE;
   data: {
-    id: number;
-    movieId: number;
-    user: user;
+    data: {
+      id: number;
+      movieId: number;
+      user: user;
+    };
+    isDiscover: boolean;
   };
 }
 interface REMOVE_LIKE_MOVIE_Action {
@@ -50,6 +55,7 @@ interface REMOVE_LIKE_MOVIE_Action {
   data: {
     likeId: number;
     movieId: number;
+    isDiscover: boolean;
   };
 }
 
@@ -84,7 +90,7 @@ const movieReducer = (state = DEFAULT_STATE, action: Action) => {
 
     // List all created movies
     case ActionType.DISCOVER_MOVIE_LIST:
-      console.log("movie List: ",action.data)
+      console.log("movie List: ", action.data);
 
       return {
         ...state,
@@ -117,79 +123,70 @@ const movieReducer = (state = DEFAULT_STATE, action: Action) => {
 
     // ADD COMMENT in state list directly on the page
     case ActionType.ADD_COMMENT_FOR_MOVIE:
-      var { movieId, ...data } = action.data;
-      //var movie = state.discoverMovieList.find(movie => movie.id == action.data.movieId) || {comments:[]}
-      var movie =
-        state.ownMovieList.find((movie) => movie.id == movieId) ||
-        ({} as movie);
+      var { movieId, isDiscover, ...data } = action.data;
+      var list = isDiscover ? state.discoverMovieList : state.ownMovieList;
+      var movie = list.find((movie) => movie.id == movieId) || ({} as movie);
       var comments = movie.comments;
       comments?.push(data);
       movie.comments = comments;
 
-      var updateOwnList = state.ownMovieList.map((m) =>
-        m.id === movieId ? movie : m
-      );
+      var updateOwnList = list.map((m) => (m.id === movieId ? movie : m));
       return {
         ...state,
-        ownMovieList: updateOwnList,
       };
 
     // DELETE COMMENT in state list directly on the page
     case ActionType.REMOVE_MOVIE_COMMENT:
-      var { movieId, commentId } = action.data;
-      //var movie = state.discoverMovieList.find(movie => movie.id == action.data.movieId) || {comments:[]}
-      var movie =
-        state.ownMovieList.find((movie) => movie.id == movieId) ||
-        ({} as movie);
+      var { movieId, commentId, isDiscover } = action.data;
+      var list = isDiscover ? state.discoverMovieList : state.ownMovieList;
+      var movie = list.find((movie) => movie.id == movieId) || ({} as movie);
       var commentIndex = movie.comments.findIndex(
         (comment) => comment.id === commentId
       );
       movie.comments.splice(commentIndex, 1);
-      var updateOwnList = state.ownMovieList.map((m) =>
-        m.id === movieId ? movie : m
-      );
+      var updateOwnList = list.map((m) => (m.id === movieId ? movie : m));
       return {
         ...state,
-        ownMovieList: updateOwnList,
       };
 
     // LIKE ACTIONS ------------
 
     // ADD LIKE MOVIE in state list directly on the page
     case ActionType.LIKE_MOVIE:
-      var { id, movieId, user } = action.data;
-      //var movie = state.discoverMovieList.find(movie => movie.id == action.data.movieId) || {comments:[]}
+      var { id, movieId, user } = action.data.data;
+      var isDiscover = action.data.isDiscover;
+      var list = isDiscover ? state.discoverMovieList : state.ownMovieList;
+
       var movie =
-        state.ownMovieList.find((movie) => movie.id == movieId) ||
+        list.find((movie) => movie.id == movieId) ||
         ({} as movie);
       var likes = movie.likes;
       var dataLike: movieLike = { id, movieId, user };
       likes?.push(dataLike);
       movie.likes = likes;
 
-      var updateOwnList = state.ownMovieList.map((m) =>
+      var updateOwnList = list.map((m) =>
         m.id === movieId ? movie : m
       );
       return {
-        ...state,
-        ownMovieList: updateOwnList,
+        ...state       
       };
 
     //REMOVE LIKE MOVIE in state list directly on the page
     case ActionType.REMOVE_LIKE_MOVIE:
-      var { movieId, likeId } = action.data;
-      //var movie = state.discoverMovieList.find(movie => movie.id == action.data.movieId) || {comments:[]}
+      var { movieId, likeId, isDiscover} = action.data;
+      var list = isDiscover ? state.discoverMovieList : state.ownMovieList;
+
       var movie =
-        state.ownMovieList.find((movie) => movie.id == movieId) ||
+        list.find((movie) => movie.id == movieId) ||
         ({} as movie);
       var likeIndex = movie.likes.findIndex((like) => like.id === likeId);
       movie.likes.splice(likeIndex, 1);
-      var updateOwnList = state.ownMovieList.map((m) =>
+      var updateOwnList = list.map((m) =>
         m.id === movieId ? movie : m
       );
       return {
-        ...state,
-        ownMovieList: updateOwnList,
+        ...state
       };
     default:
       return state;

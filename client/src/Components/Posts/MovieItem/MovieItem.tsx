@@ -28,8 +28,9 @@ import { useHistory } from "react-router";
 
 interface Props {
   movieList: Array<movie>;
+  isDiscover: boolean;
 }
-const MovieItem = ({ movieList }: Props) => {
+const MovieItem = ({ movieList, isDiscover }: Props) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { id } = useSelector((state: RootState) => state.auth).user;
@@ -40,11 +41,11 @@ const MovieItem = ({ movieList }: Props) => {
     dispatch(publishMovie(movieId, publishValue));
   };
   const likeMovieHandler = (movieId: number) => {
-    dispatch(likeMovie(movieId));
+    dispatch(likeMovie(movieId, isDiscover));
   };
   const removeLikeMovieHandler = (movieId: number, likes: Array<movieLike>) => {
     const likeId: number = likes?.find((like) => like.user.id === id)?.id || 0;
-    dispatch(removeLikeMovie(movieId, likeId));
+    dispatch(removeLikeMovie(movieId, likeId, isDiscover));
   };
   const updateMovieHandler = (movie: movie) => {
     history.push({
@@ -152,6 +153,7 @@ const MovieItem = ({ movieList }: Props) => {
                   postId={movie.id}
                   list={movie.comments}
                   commentsFor={"movie"}
+                  isDiscover={isDiscover}
                 />
               </Box>
               <Box>
@@ -159,6 +161,7 @@ const MovieItem = ({ movieList }: Props) => {
                   id={movie.id}
                   user={movie.user}
                   leaveCommentFor={"movie"}
+                  isDiscover={isDiscover}
                 />
               </Box>
             </>
