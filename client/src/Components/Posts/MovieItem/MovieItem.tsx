@@ -52,13 +52,12 @@ const MovieItem = ({ movieList }: Props) => {
       state: movie,
     });
   };
-  const deleteMovieHandler = (movieId:number) => {
+  const deleteMovieHandler = (movieId: number) => {
     let confirmAction = window.confirm("Are you sure to delete the movie?");
-    if(confirmAction) {
-        dispatch(deleteMovie(movieId, "movie"))
+    if (confirmAction) {
+      dispatch(deleteMovie(movieId, "movie"));
     }
-    
-  }
+  };
   return (
     <>
       {movieList.map((movie) => (
@@ -66,21 +65,25 @@ const MovieItem = ({ movieList }: Props) => {
           key={movie.id}
           sx={{ width: "85%", padding: "10px 20px", marginBottom: "50px" }}
         >
-           <IconButton
-            aria-label="add to favorites"
-            onClick={() => deleteMovieHandler(movie.id)}
-            sx={{ float: "right" }}
-          >
-            <CancelIcon />
-          </IconButton>
-          <IconButton
-            aria-label="add to favorites"
-            onClick={() => updateMovieHandler(movie)}
-            sx={{ float: "right" }}
-          >
-            <EditIcon sx={{ color: "#1976d2" }} />
-          </IconButton>
-         
+          {movie.user.id === id ? (
+            <>
+              <IconButton
+                aria-label="add to favorites"
+                onClick={() => deleteMovieHandler(movie.id)}
+                sx={{ float: "right" }}
+              >
+                <CancelIcon />
+              </IconButton>
+              <IconButton
+                aria-label="add to favorites"
+                onClick={() => updateMovieHandler(movie)}
+                sx={{ float: "right" }}
+              >
+                <EditIcon sx={{ color: "#1976d2" }} />
+              </IconButton>{" "}
+            </>
+          ) : null}
+
           <CardMedia
             component="img"
             height="140"
@@ -106,12 +109,14 @@ const MovieItem = ({ movieList }: Props) => {
           <CardActions style={{ float: "right" }}>
             {movie.isPublished ? (
               <>
-                <Button
-                  size="small"
-                  onClick={() => changePublishMovieHandler(movie.id, false)}
-                >
-                  <strong>Hide This Post</strong>
-                </Button>
+                {movie.user.id === id ? (
+                  <Button
+                    size="small"
+                    onClick={() => changePublishMovieHandler(movie.id, false)}
+                  >
+                    <strong>Hide This Post</strong>
+                  </Button>
+                ) : null}
                 {movie?.likes?.filter((m) => m.user.id === id).length > 0 ? (
                   <IconButton
                     aria-label="add to favorites"
@@ -143,10 +148,18 @@ const MovieItem = ({ movieList }: Props) => {
           {movie.isPublished ? (
             <>
               <Box>
-                <Comments postId={movie.id} list={movie.comments} commentsFor={"movie"}/>
+                <Comments
+                  postId={movie.id}
+                  list={movie.comments}
+                  commentsFor={"movie"}
+                />
               </Box>
               <Box>
-                <LeaveComment id={movie.id} user={movie.user} leaveCommentFor={"movie"}/>
+                <LeaveComment
+                  id={movie.id}
+                  user={movie.user}
+                  leaveCommentFor={"movie"}
+                />
               </Box>
             </>
           ) : null}

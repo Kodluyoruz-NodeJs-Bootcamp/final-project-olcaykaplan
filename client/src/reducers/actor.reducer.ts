@@ -15,9 +15,7 @@ interface MY_ACTOR_LIST_Action {
 
 interface DISCOVER_ACTOR_LIST_Action {
   type: ActionType.DISCOVER_ACTOR_LIST;
-  data: {
-    discoverActorList: Array<actor>;
-  };
+  data:Array<actor>;  
 }
 
 
@@ -88,9 +86,10 @@ const actorReducer = (state = DEFAULT_STATE, action:Action) => {
      
     // List all created actor  
     case ActionType.DISCOVER_ACTOR_LIST:
+      console.log("actor List: ",action.data)
       return {
         ...state,
-        discoverActorList: action.data.discoverActorList,
+        discoverActorList: action.data,
       };
 
       case ActionType.PUBLISH_ACTOR:

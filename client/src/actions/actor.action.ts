@@ -57,6 +57,8 @@ export const fetchOwnActorList = () => async (dispatch: Dispatch<Action>) => {
 export const fetchDiscoverActorList = () => async (dispatch: Dispatch<Action>) => {
   try {
       const {data} = await api.fetchDiscoverActorList()
+      console.log("fetchDiscoverActorList data",data)
+      dispatch({type:ActionType.DISCOVER_ACTOR_LIST, data})
   } catch (error) {
       
   }

@@ -19,14 +19,14 @@ router.get(
   "/google/callback",
   passport.authenticate("google", {
     // successRedirect: "http://localhost:3000/login",
-    // failureRedirect: "http://localhost:3000/login/failed",
+    //failureRedirect: "http://localhost:3000/login",
+    failureMessage: "error"
   }),(req, res) => {
+    console.log()
      const user = req.user as IUser
-    const token = sign({user}, "secret", {
     const token = sign({user}, process.env.JWT_SECRET as string, {
       expiresIn: TWO_HOURS,
     });
-    console.log("req",req)
     res.cookie('jwt', token, {httpOnly: true, maxAge:TWO_HOURS})
     res.redirect("http://localhost:3000/login");
   }

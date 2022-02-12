@@ -14,9 +14,7 @@ interface MY_MOVIE_LIST_Action {
 }
 interface DISCOVER_MOVIE_LIST_Action {
   type: ActionType.DISCOVER_MOVIE_LIST;
-  data: {
-    discoverMovieList: Array<movie>;
-  };
+  data:  Array<movie>; 
 }
 
 interface DELETE_MOVIE_Action {
@@ -86,9 +84,11 @@ const movieReducer = (state = DEFAULT_STATE, action: Action) => {
 
     // List all created movies
     case ActionType.DISCOVER_MOVIE_LIST:
+      console.log("movie List: ",action.data)
+
       return {
         ...state,
-        discoverList: action.data.discoverMovieList,
+        discoverMovieList: action.data,
       };
 
     case ActionType.PUBLISH_MOVIE:

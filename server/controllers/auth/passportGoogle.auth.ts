@@ -37,11 +37,12 @@ passport.use(
         source: "google",
       };
       const currentUser = await User.findOne({email:defaultUser.email});
-
-        // if(currentUser?.source != defaultUser.source){
-        //   // This email already registered by different login option 
-        //   done(null, false, {message: "differentSource"})
-        // } else {
+      console.log("currentUser.source ",currentUser?.source )
+      console.log("defaultUser.source ",defaultUser.source )
+        if(currentUser?.source !== defaultUser.source){
+          // This email already registered by different login option 
+          done(null, false, {message: "differentSource"})
+        } else {
           // check this google id is already exist
           let user = await findUserByGoogleId(profile.id);
           if (!user) {
@@ -51,19 +52,10 @@ passport.use(
           }
           console.log("user created or exist: ", user);
           done(null, user);
-     // }
+     }
     }
   )
 );
-
-// passport.serializeUser((user:user, done) => {
- 
-//   done(null, user.id);  
-// });
-
-// passport.deserializeUser((id: number, done) => {
-//   done(null, id);
-// });
 
 const findUserByGoogleId = async (googleId: string) => {
   const user = await User.findOne({ googleId });

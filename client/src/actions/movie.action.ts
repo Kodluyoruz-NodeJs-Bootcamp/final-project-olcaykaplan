@@ -56,6 +56,8 @@ export const fetchOwnMovieList = () => async (dispatch: Dispatch<Action>) => {
 export const fetchDiscoverMovieList = () => async (dispatch: Dispatch<Action>) => {
     try {
         const {data} = await api.fetchDiscoverMovieList()
+        dispatch({type:ActionType.DISCOVER_MOVIE_LIST, data})
+
     } catch (error) {
         
     }
