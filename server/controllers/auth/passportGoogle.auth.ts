@@ -10,13 +10,14 @@ export interface IUser {
   name: string;
   surname: string;
   email: string;
-  googleId: string;
+  googleId?: string;
+  facebookId?: string;
   source: string;
   picture: string;
 }
 type user = {
-  id?:number;
-}
+  id?: number;
+};
 
 // when api/auth/google route get request passport trigger below google strategy
 passport.use(
@@ -27,8 +28,7 @@ passport.use(
       callbackURL: "http://localhost:5000/api/auth/google/callback",
     },
     async (accessToken: any, refreshToken: any, profile: any, done: any) => {
-
-      const defaultUser:IUser = {
+      const defaultUser: IUser = {
         name: profile.name.givenName,
         surname: profile.name.familyName,
         email: profile.emails[0].value,
@@ -36,23 +36,23 @@ passport.use(
         googleId: profile.id,
         source: "google",
       };
-      const currentUser = await User.findOne({email:defaultUser.email});
-      console.log("currentUser.source ",currentUser?.source )
-      console.log("defaultUser.source ",defaultUser.source )
-        if(currentUser?.source !== defaultUser.source){
-          // This email already registered by different login option 
-          done(null, false, {message: "differentSource"})
-        } else {
-          // check this google id is already exist
-          let user = await findUserByGoogleId(profile.id);
-          if (!user) {
-            // if user id does not exist, create new
-            await CreateUser(defaultUser);
-            user = await findUserByGoogleId(profile.id);
-          }
-          console.log("user created or exist: ", user);
-          done(null, user);
-     }
+      const currentUser = await User.findOne({ email: defaultUser.email });
+      if (currentUser?.source !== defaultUser.source) {
+        // This email already registered by different login option
+        done(null, false, {
+          message: "You have an account registered with this email address.",
+        });
+      } else {
+        // check this google id is already exist
+        let user = await findUserByGoogleId(profile.id);
+        if (!user) {
+          // if user id does not exist, create new
+          await CreateUser(defaultUser);
+          user = await findUserByGoogleId(profile.id);
+        }
+        console.log("user created or exist: ", user);
+        done(null, user);
+      }
     }
   )
 );

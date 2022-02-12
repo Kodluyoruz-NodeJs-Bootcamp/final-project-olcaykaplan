@@ -15,34 +15,54 @@ router.get('/user-auth', isUserAuthenticated, AuthenticatedUser)
 // Google
 router.get("/google", passport.authenticate("google", {session:false, scope: ["profile", "email"] }));
 
-router.get(
-  "/google/callback",
-  passport.authenticate("google", {
-    // successRedirect: "http://localhost:3000/login",
-    //failureRedirect: "http://localhost:3000/login",
-    failureMessage: "error"
-  }),(req, res) => {
-    console.log()
-     const user = req.user as IUser
+router.get("/google/callback", function(req, res, next) {
+  passport.authenticate("google", function(err, user, info){
+    if(err) { 
+      console.log("err")
+      return next(err)}
+    if(!user) {
+      console.log("info:",info)
+      //res.status(200).send({msg:"buraya hata mesajı"})
+      res.cookie('info', info.message)
+      res.redirect("http://localhost:3000/login/")
+    }
+    console.log("else")
     const token = sign({user}, process.env.JWT_SECRET as string, {
-      expiresIn: TWO_HOURS,
-    });
+            expiresIn: TWO_HOURS,
+          });
+    res.cookie('info', "")
     res.cookie('jwt', token, {httpOnly: true, maxAge:TWO_HOURS})
     res.redirect("http://localhost:3000/login");
-  }
-);
+  })(req, res, next);
+});
+    
+
 
 // FACEBOOK
 router.get("/facebook", passport.authenticate("facebook", { scope: ["profile", "email"] }));
 
 router.get(
-  "/facebook/callback",
-  passport.authenticate("facebook", {
-    successRedirect: CLIENT_URL,
-    failureRedirect: "/login/failed",
-  })
-);
-
+  "/facebook/callback",function(req, res, next) {
+    passport.authenticate("facebook", function(err, user, info){
+      if(err) { 
+        console.log("err")
+        return next(err)}
+      if(!user) {
+        console.log("info:",info)
+        //res.status(200).send({msg:"buraya hata mesajı"})
+        res.cookie('info', info.message)
+        res.redirect("http://localhost:3000/login/")
+      }
+      console.log("else")
+      const token = sign({user}, process.env.JWT_SECRET as string, {
+              expiresIn: TWO_HOURS,
+            });
+      res.cookie('info', "")
+      res.cookie('jwt', token, {httpOnly: true, maxAge:TWO_HOURS})
+      res.redirect("http://localhost:3000/login");
+    })(req, res, next);
+  });
+  
 
 
 export = router;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Box, Button, Grid, Paper, Typography } from "@mui/material";
+import { Alert, Avatar, Box, Button, Grid, Paper, Typography } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "../actions/user.action";
@@ -10,7 +10,9 @@ import { RootState } from "../reducers";
 const Login = () => {
   const dispatch = useDispatch();
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
-  
+  let cookieValue : string = document.cookie.split('; ').find(row => row.startsWith("info"))?.split('=')[1] || "";
+  let message = decodeURI(cookieValue)
+
   const google = async () => {
     window.open("http://localhost:5000/api/auth/google", "_parent");
   };
@@ -58,6 +60,10 @@ const Login = () => {
             Login By
           </Typography>
           <Box textAlign="center" mt={5}>
+          {message.length > 0 ?
+          <Alert severity="warning">{message }</Alert>
+          : null
+          }
             <Button
               color="inherit"
               style={{ margin: "10px 15px", border: "1px solid lightgrey" }}
