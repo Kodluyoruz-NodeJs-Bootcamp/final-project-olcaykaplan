@@ -16,18 +16,6 @@ Also, users can delete, update their own posts, additionally, leave a comment an
   * Redux to manage application's state
   * Redux Thunk middleware to handle asynchronous redux actions
 
-## Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to **deploy**(Bold Example) the project on a live system.
-
-### Prerequisites
-
-What things you need to install the software and how to install them
-
-```
-Give examples
-```
-
 ## Install
 npm version 14^
 
