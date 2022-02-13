@@ -12,7 +12,7 @@ createConnection()
   .then((connection) => {
     const app = express();
     app.use(express.json());
-    app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+    app.use(cors({ credentials: true, origin: ["http://localhost:3000", "https://movies-final.netlify.app"] }));
     app.use(cookieParser());
 
     app.use("/api", api);

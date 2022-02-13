@@ -5,7 +5,7 @@ import passport from "passport";
 import {sign} from "jsonwebtoken";
 import {IUser} from '../controllers/auth/passportGoogle.auth';
 import "dotenv/config"
-const CLIENT_URL = "http://localhost/3000"
+const CLIENT_URL_LOGIN = "https://movies-final.netlify.app/login"
 const router = express.Router();
 const TWO_HOURS = 1000 * 60 * 60 * 2;
 
@@ -24,7 +24,7 @@ router.get("/google/callback", function(req, res, next) {
       console.log("info:",info)
       //res.status(200).send({msg:"buraya hata mesajı"})
       res.cookie('info', info.message)
-      res.redirect("http://localhost:3000/login/")
+      res.redirect(CLIENT_URL_LOGIN)
     }
     console.log("else")
     const token = sign({user}, process.env.JWT_SECRET as string, {
@@ -32,7 +32,7 @@ router.get("/google/callback", function(req, res, next) {
           });
     res.cookie('info', "")
     res.cookie('jwt', token, {httpOnly: true, maxAge:TWO_HOURS})
-    res.redirect("http://localhost:3000/login");
+    res.redirect(CLIENT_URL_LOGIN);
   })(req, res, next);
 });
     
@@ -51,7 +51,7 @@ router.get(
         console.log("info:",info)
         //res.status(200).send({msg:"buraya hata mesajı"})
         res.cookie('info', info.message)
-        res.redirect("http://localhost:3000/login/")
+        res.redirect(CLIENT_URL_LOGIN)
       }
       console.log("else")
       const token = sign({user}, process.env.JWT_SECRET as string, {
@@ -59,7 +59,7 @@ router.get(
             });
       res.cookie('info', "")
       res.cookie('jwt', token, {httpOnly: true, maxAge:TWO_HOURS})
-      res.redirect("http://localhost:3000/login");
+      res.redirect(CLIENT_URL_LOGIN);
     })(req, res, next);
   });
   
