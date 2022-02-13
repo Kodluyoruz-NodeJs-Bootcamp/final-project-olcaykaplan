@@ -1,7 +1,7 @@
 import axios from "axios";
 import { movieRegister, actorRegister } from "../utils/types";
 
-const url = "http://localhost:5000/api";
+const url = "https://movies-api-final.herokuapp.com/api";
 
 const API = axios.create({ baseURL: url, withCredentials: true });
 

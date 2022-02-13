@@ -25,7 +25,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-      callbackURL: "http://localhost:5000/api/auth/google/callback",
+      callbackURL: "https://movies-api-final.herokuapp.com/api/auth/google/callback",
     },
     async (accessToken: any, refreshToken: any, profile: any, done: any) => {
       const defaultUser: IUser = {

@@ -11,7 +11,7 @@ passport.use(
     {
       clientID: process.env.FACEBOOK_CLIENT_ID as string,
       clientSecret: process.env.FACEBOOK_CLIENT_SECRET as string,
-      callbackURL: "http://localhost:5000/api/auth/google/callback",
+      callbackURL: "https://movies-api-final.herokuapp.com/api/auth/google/callback",
     },
     async (accessToken: any, refreshToken: any, profile: any, done) => {
       const defaultUser: IUser = {

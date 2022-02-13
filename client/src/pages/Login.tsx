@@ -14,7 +14,7 @@ const Login = () => {
   let message = decodeURI(cookieValue)
 
   const google = async () => {
-    window.open("http://localhost:5000/api/auth/google", "_parent");
+    window.open("https://movies-api-final.herokuapp.com/api/auth/google", "_parent");
   };
 
   useEffect(() => {

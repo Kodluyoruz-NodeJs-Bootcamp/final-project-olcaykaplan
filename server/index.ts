@@ -26,6 +26,11 @@ createConnection()
 
     const PORT: Number = Number(process.env.PORT) || 5000;
     app.listen(PORT, () => console.log(`Server is running on PORT ${PORT}`));
+    app.get("/", (req, res) => {
+      res.send("Hello World")
+    })
+    
+    
   })
   .catch((error) => {
     console.log("Error:", error);

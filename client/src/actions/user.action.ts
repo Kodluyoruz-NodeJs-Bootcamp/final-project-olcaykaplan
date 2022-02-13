@@ -2,7 +2,6 @@ import * as api from "../api";
 import { ActionType } from "../utils/constant";
 import { Dispatch } from "redux"
 import { Action } from "../reducers/auth.reducer";
-import { Action as ActionMovie } from "../reducers/movie.reducer";
 
 export const fetchUser = () => async (dispatch:Dispatch<Action>) => {
   try {
