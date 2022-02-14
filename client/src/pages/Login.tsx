@@ -16,6 +16,9 @@ const Login = () => {
   const google = async () => {
     window.open("https://movies-api-final.herokuapp.com/api/auth/google", "_parent");
   };
+  const facebook = async () => {
+    window.open("https://movies-api-final.herokuapp.com/api/auth/facebook", "_parent");
+  };
 
   useEffect(() => {
     dispatch(fetchUser());
@@ -80,6 +83,7 @@ const Login = () => {
                 backgroundColor: "#3F51B5",
                 color: "white",
               }}
+              onClick={facebook}
             >
               <FacebookIcon style={{ width: "40px", marginRight: "30px" }} />
               Countinue with Facebook

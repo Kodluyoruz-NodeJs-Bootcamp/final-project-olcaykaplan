@@ -29,6 +29,8 @@ passport.use(
         done(null, false, {
           message: "You have an account registered with this email address.",
         });}
+        console.log("user  exist: ", currentUser);
+        done(null, currentUser);
       } else {
         // check this facebook id is already exist
         let user = await findUserByFacebookId(profile.id);

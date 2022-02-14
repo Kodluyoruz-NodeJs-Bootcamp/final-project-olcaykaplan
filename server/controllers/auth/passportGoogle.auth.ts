@@ -44,6 +44,8 @@ passport.use(
         done(null, false, {
           message: "You have an account registered with this email address.",
         });}
+        console.log("user  exist: ", currentUser);
+        done(null, currentUser);
       } else {
         // check this google id is already exist
         let user = await findUserByGoogleId(profile.id);
@@ -52,7 +54,7 @@ passport.use(
           await CreateUser(defaultUser);
           user = await findUserByGoogleId(profile.id);
         }
-        console.log("user created or exist: ", user);
+        console.log("user created : ", user);
         done(null, user);
       }
     }
