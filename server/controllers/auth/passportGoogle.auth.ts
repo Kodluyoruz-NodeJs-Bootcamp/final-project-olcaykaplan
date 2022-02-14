@@ -37,11 +37,13 @@ passport.use(
         source: "google",
       };
       const currentUser = await User.findOne({ email: defaultUser.email });
-      if (currentUser?.source !== defaultUser.source) {
+      console.log("currentUser",currentUser)
+      if (currentUser) {
+        if(currentUser?.source !== defaultUser.source){
         // This email already registered by different login option
         done(null, false, {
           message: "You have an account registered with this email address.",
-        });
+        });}
       } else {
         // check this google id is already exist
         let user = await findUserByGoogleId(profile.id);
